@@ -1,9 +1,14 @@
+import { CoolRetroHyperConfiguration, HyperState } from "src/types"
+
 declare global {
   interface Window {
     config: {
       getConfig(): {
-        coolRetroHyper: {}
+        coolRetroHyper: CoolRetroHyperConfiguration
       }
+    }
+    store: {
+      getState(): HyperState
     }
   }
 }
