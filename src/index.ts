@@ -1,5 +1,5 @@
 import type ReactOrigin from 'react'
-import * as styles from './styles/init'
+import * as styles from './styles'
 import React from 'react'
 
 type HyperComponentProps = {
