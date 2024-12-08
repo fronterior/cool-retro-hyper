@@ -15,16 +15,23 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "postprocessing": "6.36.3",
+    "three": "0.157.0"
+  },
   "devDependencies": {
+    "@types/node": "22.10.1",
+    "@types/three": "0.157",
     "prettier": "3.4.2",
     "tsup": "8.3.5",
-    "typescript": "^5.7.2"
+    "typescript": "5.7.2"
   },
   "peerDependencies": {
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.25",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25"
+    "xterm": "4.19.0"
   },
   "packageManager": "pnpm@9.13.2"
 }
