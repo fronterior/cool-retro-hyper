@@ -1,35 +1,53 @@
-import type React from "react"
+import type ReactOrigin from 'react'
+import * as styles from './styles/init'
+import React from 'react'
+
+type HyperComponentProps = {
+  onDecorated(terms: React.ReactNode): void
+}
+
+type HyperComponent = React.ComponentType<HyperComponentProps>
+
+type CoolRetroHyperConfiguration = {
+  test?: string
+}
 
 export function decorateHyper(
-  Terms: React.Component,
-  { React }
+  Terms: HyperComponent,
+  { React }: { React: typeof ReactOrigin },
 ) {
-  return class extends React.Component {
+  // only class components are allowed
+  return class extends React.Component<HyperComponentProps> {
     static {
-      console.log('Init cool-retro-hyper!')
+      console.log('Cool Retro Hyper')
+
+      styles.init()
     }
 
-    constructor(props: Record<string, unknown>, context: Record<string, unknown>) {
-      super(props, context);
-      this.terms = null;
-      this.onDecorated = this.onDecorated.bind(this);
+    config: CoolRetroHyperConfiguration
+    terms: React.ReactNode
+
+    constructor(props: HyperComponentProps, context: Record<string, unknown>) {
+      super(props, context)
+      this.terms = null
+      this.onDecorated = this.onDecorated.bind(this)
+
+      this.config = window.config.getConfig().coolRetroHyper
     }
 
     onDecorated(terms: React.ReactNode) {
-      this.terms = terms;
+      this.terms = terms
       // Don't forget to propagate it to HOC chain
-      if (this.props.onDecorated) this.props.onDecorated(terms);
+      if (this.props.onDecorated) this.props.onDecorated(terms)
     }
 
     render() {
       return React.createElement(
         Terms,
         Object.assign({}, this.props, {
-          onDecorated: this.onDecorated
-        })
-      );
-      // Or if you use JSX:
-      // <Terms onDecorated={this.onDecorated} />
+          onDecorated: this.onDecorated,
+        }),
+      )
     }
   }
 }

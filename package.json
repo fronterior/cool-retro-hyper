@@ -5,11 +5,16 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsup src/index.ts --format=cjs",
+    "dev": "pnpm run build --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lowfront/cool-retro-hyper"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "prettier": "3.4.2",
     "tsup": "8.3.5",
@@ -20,5 +25,6 @@
     "react-dom": "^18.0.0",
     "@types/react": "18.2.79",
     "@types/react-dom": "18.2.25"
-  }
+  },
+  "packageManager": "pnpm@9.13.2"
 }
