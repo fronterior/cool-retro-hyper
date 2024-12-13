@@ -9,8 +9,21 @@ export const init = () => {
   height: 100%;
 }
 
-.term_fit.term_active {
+.term_fit {
   padding: 0 !important;
+}
+
+.xterm-viewport {
+  opacity: 0;
+}
+
+canvas.cool-retro-hyper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
 }
 `.trim()
 
@@ -20,5 +33,5 @@ export const init = () => {
 
   console.log(style)
 
-  document.body.append(style)
+  document.head.append(style)
 }
