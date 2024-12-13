@@ -54,6 +54,7 @@ export function createCRTEffectPasses() {
       ['ambientLight', new THREE.Uniform(0.0005)],
       ['pixelHeight', new THREE.Uniform(6.0)],
       ['pixelization', new THREE.Uniform(false)],
+      ['rbgSplit', new THREE.Uniform(0.4)], // 글씨 나눠지는 효과, 눈아픔
     ]),
   })
 
