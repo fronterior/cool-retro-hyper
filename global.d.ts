@@ -1,4 +1,5 @@
-import { CoolRetroHyperConfiguration, HyperState } from "src/types"
+import { CoolRetroHyperConfiguration, HyperState } from 'src/types'
+import { ShaderMaterial } from 'three'
 
 declare global {
   interface Window {
@@ -13,4 +14,18 @@ declare global {
   }
 }
 
-export { }
+declare module 'xterm' {
+  interface Terminal {
+    _core: {
+      screenElement: HTMLElement
+    }
+  }
+}
+
+declare module 'postprocessing' {
+  interface Pass {
+    get fullscreenMaterial(): ShaderMaterial
+  }
+}
+
+export {}

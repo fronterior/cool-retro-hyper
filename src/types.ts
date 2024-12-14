@@ -1,4 +1,3 @@
-import type React from 'react'
 import type { FontWeight, Terminal } from 'xterm'
 
 // https://github.com/vercel/hyper/blob/2a7bb18259d975f27b30b502af1be7576f6f5656/typings/config.d.ts
