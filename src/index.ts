@@ -1,9 +1,11 @@
 import type ReactOrigin from 'react'
 import * as styles from './styles'
 import React from 'react'
-import { CoolRetroHyperConfiguration, HyperState, Term, Terms } from './types'
+import { CoolRetroHyperConfiguration, HyperState, Terms } from './types'
 import { createCRTEffectPasses } from './createCRTEffectPasses'
 import { XTermEffect } from './XTermEffect'
+import { Terminal } from 'xterm'
+import { XTermConnector } from './XtermConnector'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -25,16 +27,18 @@ export function decorateHyper(
       styles.init()
     }
 
-    static xTermEffect: XTermEffect
+    static defaultConfig = {
+      fps: 60,
+    }
 
-    private config: CoolRetroHyperConfiguration
+    static xTermEffect: XTermEffect
+    static xTermConnector = new XTermConnector()
+
     private hyper: HyperComponent
 
     constructor(props: HyperComponentProps, context: Record<string, unknown>) {
       super(props, context)
       this.onDecorated = this.onDecorated.bind(this)
-
-      this.config = window.config.getConfig().coolRetroHyper ?? {}
     }
 
     onDecorated(terms: HyperComponent) {
@@ -43,7 +47,7 @@ export function decorateHyper(
     }
 
     componentDidUpdate() {
-      setTimeout(() => this.updateXTerms())
+      Promise.resolve().then(() => this.updateXTerms())
     }
 
     updateXTerms() {
@@ -51,7 +55,7 @@ export function decorateHyper(
       const activeRootId = state.termGroups.activeRootGroup
       if (!activeRootId) return
 
-      const visibleTerms: Term[] = []
+      const visibleTerms: { id: string; term: Terminal }[] = []
       for (const id of this.getVisibleTermsIdsForRootId(state, activeRootId)) {
         const termGroup = state.termGroups.termGroups[id]
         if (!termGroup) continue
@@ -59,11 +63,27 @@ export function decorateHyper(
         const sessionId = termGroup.sessionUid
         if (!sessionId) continue
 
-        const term = this.hyper.terms.terms[sessionId]
+        const { term } = this.hyper.terms.terms[sessionId] ?? { term: null }
         if (!term) continue
 
-        visibleTerms.push(term)
+        visibleTerms.push({ id, term })
       }
+
+      const firstVisibleTerm = visibleTerms.at(0)
+      if (!firstVisibleTerm) {
+        return
+      }
+
+      const connectOptions = Object.assign(
+        {},
+        CoolRetroHyper.defaultConfig,
+        window.config.getConfig()?.coolRetroHyper ?? {},
+      )
+
+      // CoolRetroHyper.xTermConnector.connect(
+      //   firstVisibleTerm.term,
+      //   connectOptions,
+      // )
 
       if (!CoolRetroHyper.xTermEffect) {
         console.log('Creating CRT effect passes')

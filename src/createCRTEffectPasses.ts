@@ -1,21 +1,21 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import * as THREE from 'three'
-import * as POSTPROCESSING from 'postprocessing'
+import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
+import { EffectPass } from 'postprocessing'
 
-class GlslEffect extends POSTPROCESSING.Effect {
+class GlslEffect extends Effect {
   constructor(
     name: string,
     options: {
-      blendFunction?: POSTPROCESSING.BlendFunction
+      blendFunction?: BlendFunction
       uniforms?: Map<string, THREE.Uniform<unknown>>
     } = {},
   ) {
     const fragmentShader = readFileSync(
       resolve(__dirname, '../glsl/' + name + '.glsl'),
     ).toString()
-    options.blendFunction =
-      options.blendFunction || POSTPROCESSING.BlendFunction.NORMAL
+    options.blendFunction = options.blendFunction || BlendFunction.NORMAL
 
     super(name, fragmentShader, options)
   }
@@ -27,7 +27,7 @@ export function createCRTEffectPasses() {
     window.innerHeight,
     { format: THREE.RGBAFormat, stencilBuffer: false },
   )
-  const savePass = new POSTPROCESSING.CopyPass(saveTarget)
+  const savePass = new CopyPass(saveTarget)
 
   const burnInEffect = new GlslEffect('burn-in', {
     uniforms: new Map<string, THREE.Uniform<unknown>>([
@@ -54,7 +54,7 @@ export function createCRTEffectPasses() {
       ['ambientLight', new THREE.Uniform(0.0005)],
       ['pixelHeight', new THREE.Uniform(6.0)],
       ['pixelization', new THREE.Uniform(false)],
-      ['rbgSplit', new THREE.Uniform(0.4)], // 글씨 나눠지는 효과, 눈아픔
+      ['rbgSplit', new THREE.Uniform(0.25)],
     ]),
   })
 
@@ -69,10 +69,9 @@ export function createCRTEffectPasses() {
     },
   )
 
-  const bloomEffect = new POSTPROCESSING.BloomEffect({
+  const bloomEffect = new BloomEffect({
     kernelSize: 3,
-    distinction: 0.5,
-    blendFunction: POSTPROCESSING.BlendFunction.LIGHTEN,
+    blendFunction: BlendFunction.LIGHTEN,
     // blendFunction: POSTPROCESSING.BlendFunction.AVERAGE,
   })
 
@@ -86,95 +85,25 @@ export function createCRTEffectPasses() {
     ]),
   })
 
-  function coordinateTransform(x: number, y: number) {
-    x -= 0.5
-    y -= 0.5
-
-    let dist = screenCurvature * (x * x + y * y)
-    dist *= 1.0 + dist
-
-    return [x * dist + x + 0.5, y * dist + y + 0.5]
-  }
-
-  const scaleEffects = []
-
-  // scale
-  scaleEffects.push(
-    new POSTPROCESSING.Effect(
+  const scaleEffects = [
+    new Effect(
       'scale',
       readFileSync(resolve(__dirname, '../glsl/scale.glsl')).toString(),
-      { defines: new Map([['scale', '0.99']]) },
+      { defines: new Map([['scale', '0.985']]) },
     ),
-  )
-
-  // avoid sampling issues
-  scaleEffects.push(
-    new POSTPROCESSING.Effect(
+    new Effect(
       'sampling',
       readFileSync(resolve(__dirname, '../glsl/sampling.glsl')).toString(),
-      { blendFunction: POSTPROCESSING.BlendFunction.NORMAL },
+      { blendFunction: BlendFunction.NORMAL },
     ),
-  )
+  ]
 
-  // // bloom
-  // spaceEffects.push(
-  //   new POSTPROCESSING.BloomEffect({
-  //     kernelSize: 3,
-  //     distinction: -0.5,
-  //   })
-  // );
-
-  // const shader = new POSTPROCESSING.Effect(
-  //   "ethereal-whispers",
-  //   readFileSync(
-  //     resolve(__dirname, "../glsl/ethereal-whispers.glsl")
-  //   ).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "rain",
-  //   readFileSync(resolve(__dirname, "../glsl/rain.glsl")).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "zippy-zaps",
-  //   readFileSync(resolve(__dirname, "../glsl/zippy-zaps.glsl")).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "gyroids",
-  //   readFileSync(resolve(__dirname, "../glsl/gyroids.glsl")).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "bubble-rings",
-  //   readFileSync(resolve(__dirname, "../glsl/bubble-rings.glsl")).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "ui-noise-halo",
-  //   readFileSync(
-  //     resolve(__dirname, "../glsl/ui-noise-halo.glsl")
-  //   ).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  const shader = new POSTPROCESSING.Effect(
+  const shader = new Effect(
     'in-space',
     readFileSync(resolve(__dirname, '../glsl/in-space.glsl')).toString(),
-    { blendFunction: POSTPROCESSING.BlendFunction.SCREEN },
+    { blendFunction: BlendFunction.SCREEN },
   )
-  // const shader = new POSTPROCESSING.Effect(
-  //   "kirby-jump",
-  //   readFileSync(resolve(__dirname, "../glsl/kirby-jump.glsl")).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
-  // const shader = new POSTPROCESSING.Effect(
-  //   "new-colorful-galaxy",
-  //   readFileSync(
-  //     resolve(__dirname, "../glsl/new-colorful-galaxy.glsl")
-  //   ).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
+
   // const shader = new POSTPROCESSING.Effect(
   //   "neonwave-sunset",
   //   readFileSync(
@@ -185,16 +114,21 @@ export function createCRTEffectPasses() {
 
   return {
     passes: [
-      new POSTPROCESSING.EffectPass(undefined, ...scaleEffects),
-      new POSTPROCESSING.EffectPass(undefined, shader),
-      new POSTPROCESSING.EffectPass(undefined, burnInEffect),
+      new EffectPass(undefined, ...scaleEffects),
+      new EffectPass(undefined, burnInEffect),
+      new EffectPass(undefined, shader),
+      new EffectPass(undefined, retroEffect),
       savePass,
-      new POSTPROCESSING.EffectPass(undefined, retroEffect),
-      new POSTPROCESSING.EffectPass(undefined, bloomEffect),
-      new POSTPROCESSING.EffectPass(undefined, frameEffect),
+      new EffectPass(undefined, bloomEffect),
+      new EffectPass(undefined, frameEffect),
     ],
-    coordinateTransform,
-    three: THREE,
-    postprocessing: POSTPROCESSING,
+    coordinateTransform(x: number, y: number) {
+      const cx = x - 0.5
+      const cy = y - 0.5
+
+      const dist = (screenCurvature + 0.05) * (cx * cx + cy * cy)
+
+      return [x + cx * (1 + dist) * dist, y + cy * (1 + dist) * dist]
+    },
   }
 }
