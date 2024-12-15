@@ -1,3 +1,4 @@
+import { EffectPass } from 'postprocessing'
 import { EffectComposer, Pass, RenderPass } from 'postprocessing'
 import {
   CanvasTexture,
@@ -33,8 +34,9 @@ export class XTermConnector {
   private camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 1, 1000)
   private composer = new EffectComposer(this.renderer)
   private clock = new Clock(true)
-  private passes = [new RenderPass(this.scene, this.camera)]
-  private shaderPasses: Pass[]
+  private renderPasse = new RenderPass(this.scene, this.camera)
+  private shaderPasses: Pass[] = []
+  private passes: Pass[] = []
   private screenElement: HTMLElement
 
   private cancelDraw = () => {}
@@ -46,9 +48,12 @@ export class XTermConnector {
   constructor() {
     // event
     // this.proxyEvents()
+    console.log(
+      `document.getElementById('hyper')`,
+      document.getElementById('hyper'),
+    )
 
-    document.getElementById('hyper')?.append(this.canvas)
-
+    this.renderer.setPixelRatio(window.devicePixelRatio)
     this.camera.position.z = 1
 
     // debounce
@@ -58,8 +63,19 @@ export class XTermConnector {
   private syncSize() {
     const { offsetWidth = 1, offsetHeight = 1 } = this.screenElement ?? {}
     const { devicePixelRatio } = window
+    console.log('[syncSize]', offsetWidth, offsetHeight)
 
     this.composer.setSize(offsetWidth, offsetHeight)
+    console.log(
+      'offsetWidth',
+      offsetWidth,
+      'offsetHeight',
+      offsetHeight,
+      'dpRatio',
+      devicePixelRatio,
+      offsetWidth * devicePixelRatio,
+      offsetHeight * devicePixelRatio,
+    )
 
     const uniformValues = {
       aspect: offsetWidth / offsetHeight,
@@ -68,6 +84,7 @@ export class XTermConnector {
         offsetHeight * devicePixelRatio,
       ),
     }
+    console.log('uniformValues', uniformValues)
 
     for (const [uniformKey, uniformValue] of Object.entries(uniformValues)) {
       for (const pass of this.shaderPasses) {
@@ -81,11 +98,35 @@ export class XTermConnector {
     }
   }
 
-  connect(xTerm: Terminal, options: ConnectOptions) {
-    this.resetScreenElementOpacity()
-    this.cancelDraw()
+  private setPasses(passes: Pass[]) {
+    const { composer } = this
+    composer.removeAllPasses()
+    for (const pass of this.passes) {
+      pass.dispose()
+    }
 
+    composer.addPass(this.renderPasse)
+    if (passes.length) {
+      passes[passes.length - 1]!.renderToScreen = true
+      for (const pass of passes) {
+        composer.addPass(pass)
+      }
+    }
+
+    this.shaderPasses = passes.filter(
+      (pass) => pass instanceof Pass && !(pass instanceof EffectPass),
+    )
+  }
+
+  connect(xTerm: Terminal, passes: Pass[], options: ConnectOptions) {
+    console.log('[connect]')
+    document.getElementById('hyper')?.append(this.canvas)
+
+    this.resetScreenElementOpacity()
+
+    this.setPasses(passes)
     this.options = options
+    this.passes = passes
     this.screenElement = xTerm._core.screenElement
 
     this.resetScreenElementOpacity = (() => {
@@ -126,10 +167,16 @@ export class XTermConnector {
 
       // debounce
       mesh.material.map = texture
+
+      this.syncSize()
+      this.start()
     }
   }
 
-  render() {
+  start() {
+    console.log('[render]')
+    this.cancelDraw()
+
     const materials = Array.from(
       this.scene.children,
       (mesh) => (mesh as Mesh).material as MeshBasicMaterial,
@@ -149,11 +196,14 @@ export class XTermConnector {
       [],
     )
 
+    console.log('materials, timeUniforms', materials, timeUniforms)
+
     const fps = 1000 / (this.options.fps ?? 60)
     const { clock, composer } = this
 
     let previousTime = 0
     let requestAnimationFrameId = requestAnimationFrame(function draw(time) {
+      // console.log('[draw]')
       const dist = time - previousTime
       if (dist < fps) {
         requestAnimationFrame(draw)
@@ -175,6 +225,7 @@ export class XTermConnector {
     })
 
     this.cancelDraw = function cancelDraw() {
+      console.log('[cancelDraw]')
       cancelAnimationFrame(requestAnimationFrameId)
     }
   }

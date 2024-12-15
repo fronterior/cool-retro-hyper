@@ -80,26 +80,28 @@ export function decorateHyper(
         window.config.getConfig()?.coolRetroHyper ?? {},
       )
 
-      // CoolRetroHyper.xTermConnector.connect(
-      //   firstVisibleTerm.term,
-      //   connectOptions,
-      // )
+      const crtEffectPasses = await createCRTEffectPasses(connectOptions)
 
-      if (!CoolRetroHyper.xTermEffect) {
-        console.log('Creating CRT effect passes')
-        const crtEffectPasses = await createCRTEffectPasses(connectOptions)
+      CoolRetroHyper.xTermConnector.connect(
+        firstVisibleTerm.term,
+        crtEffectPasses.passes,
+        connectOptions,
+      )
 
-        CoolRetroHyper.xTermEffect = new XTermEffect(crtEffectPasses)
-
-        for (const { term: xTerm } of visibleTerms) {
-          CoolRetroHyper.xTermEffect.attach(xTerm, false)
-          CoolRetroHyper.xTermEffect.startAnimationLoop()
-        }
-      } else {
-        for (const { term: xTerm } of visibleTerms) {
-          CoolRetroHyper.xTermEffect.attach(xTerm, false)
-        }
-      }
+      // if (!CoolRetroHyper.xTermEffect) {
+      //   console.log('Creating CRT effect passes')
+      //
+      //   CoolRetroHyper.xTermEffect = new XTermEffect(crtEffectPasses)
+      //
+      //   for (const { term: xTerm } of visibleTerms) {
+      //     CoolRetroHyper.xTermEffect.attach(xTerm, false)
+      //     CoolRetroHyper.xTermEffect.startAnimationLoop()
+      //   }
+      // } else {
+      //   for (const { term: xTerm } of visibleTerms) {
+      //     CoolRetroHyper.xTermEffect.attach(xTerm, false)
+      //   }
+      // }
     }
 
     getVisibleTermsIdsForRootId(state: HyperState, activeRootId: string) {
