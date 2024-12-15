@@ -1,27 +1,17 @@
-import { readFileSync } from 'fs'
-import { resolve } from 'path'
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
 import * as THREE from 'three'
 import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
 import { EffectPass } from 'postprocessing'
+import * as glsl from './glsl'
+import { CoolRetroHyperConfiguration } from './types'
 
-class GlslEffect extends Effect {
-  constructor(
-    name: string,
-    options: {
-      blendFunction?: BlendFunction
-      uniforms?: Map<string, THREE.Uniform<unknown>>
-    } = {},
-  ) {
-    const fragmentShader = readFileSync(
-      resolve(__dirname, '../glsl/' + name + '.glsl'),
-    ).toString()
-    options.blendFunction = options.blendFunction || BlendFunction.NORMAL
+const userShaderCache: Record<string, Promise<string>> = {}
 
-    super(name, fragmentShader, options)
-  }
-}
-
-export function createCRTEffectPasses() {
+export async function createCRTEffectPasses(
+  options: CoolRetroHyperConfiguration = {},
+) {
   const saveTarget = new THREE.WebGLRenderTarget(
     window.innerWidth,
     window.innerHeight,
@@ -29,7 +19,8 @@ export function createCRTEffectPasses() {
   )
   const savePass = new CopyPass(saveTarget)
 
-  const burnInEffect = new GlslEffect('burn-in', {
+  const burnInEffect = new Effect('burn-in', glsl.burnIn, {
+    blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['burnInSource', new THREE.Uniform(saveTarget.texture)],
       ['burnInTime', new THREE.Uniform(0.4)],
@@ -39,7 +30,8 @@ export function createCRTEffectPasses() {
   const jitter = 0.4
   const screenCurvature = 0.2
 
-  const retroEffect = new GlslEffect('retro', {
+  const retroEffect = new Effect('retro', glsl.retro, {
+    blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['fontColor', new THREE.Uniform(new THREE.Vector3(1, 1, 1))],
       ['chromaColor', new THREE.Uniform(2.5)],
@@ -59,7 +51,7 @@ export function createCRTEffectPasses() {
   })
 
   new THREE.TextureLoader().load(
-    resolve(__dirname, '../images/allNoise512.png'),
+    path.resolve(__dirname, '../src/assets/images/allNoise512.png'),
     (texture) => {
       texture.minFilter = THREE.LinearFilter
       texture.wrapS = THREE.RepeatWrapping
@@ -75,7 +67,8 @@ export function createCRTEffectPasses() {
     // blendFunction: POSTPROCESSING.BlendFunction.AVERAGE,
   })
 
-  const frameEffect = new GlslEffect('retro_frame', {
+  const frameEffect = new Effect('retro-frame', glsl.retroFrame, {
+    blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       [
         'frameColor',
@@ -86,37 +79,49 @@ export function createCRTEffectPasses() {
   })
 
   const scaleEffects = [
-    new Effect(
-      'scale',
-      readFileSync(resolve(__dirname, '../glsl/scale.glsl')).toString(),
-      { defines: new Map([['scale', '0.985']]) },
-    ),
-    new Effect(
-      'sampling',
-      readFileSync(resolve(__dirname, '../glsl/sampling.glsl')).toString(),
-      { blendFunction: BlendFunction.NORMAL },
-    ),
+    new Effect('scale', glsl.scale, { defines: new Map([['scale', '0.985']]) }),
+    new Effect('sampling', glsl.sampling, {
+      blendFunction: BlendFunction.NORMAL,
+    }),
   ]
 
-  const shader = new Effect(
-    'in-space',
-    readFileSync(resolve(__dirname, '../glsl/in-space.glsl')).toString(),
-    { blendFunction: BlendFunction.SCREEN },
+  const userShaders = await Promise.all(
+    (options.shaderPaths ?? []).map((glslPath: string) => {
+      if (glslPath in userShaderCache) {
+        return userShaderCache[glslPath]!.then((code) => ({
+          filePath: glslPath,
+          code,
+        }))
+      }
+
+      const resolvedPath = glslPath.replace(/^~/, os.homedir())
+      const normalizedPath = path.normalize(resolvedPath)
+
+      const promise = fs.promises
+        .readFile(normalizedPath)
+        .then((value) => ({ filePath: glslPath, code: value.toString() }))
+
+      userShaderCache[glslPath] = promise.then(({ code }) => code)
+
+      return promise
+    }),
   )
 
-  // const shader = new POSTPROCESSING.Effect(
-  //   "neonwave-sunset",
-  //   readFileSync(
-  //     resolve(__dirname, "../glsl/neonwave-sunset.glsl")
-  //   ).toString(),
-  //   { blendFunction: POSTPROCESSING.BlendFunction.SCREEN }
-  // );
+  const userEffectPass = userShaders.map(
+    ({ filePath, code }) =>
+      new EffectPass(
+        undefined,
+        new Effect(filePath.split('/').pop()!, code, {
+          blendFunction: BlendFunction.SCREEN,
+        }),
+      ),
+  )
 
   return {
     passes: [
       new EffectPass(undefined, ...scaleEffects),
       new EffectPass(undefined, burnInEffect),
-      new EffectPass(undefined, shader),
+      ...userEffectPass,
       new EffectPass(undefined, retroEffect),
       savePass,
       new EffectPass(undefined, bloomEffect),

@@ -388,7 +388,7 @@ void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
   col = sRGB(col); 
 
 
-  fragColor = vec4(col * 0.2, 1.0);
+  fragColor = vec4(col * 0.05, 1.0);
   // fragColor = vec4(0.0, 1.0, 0.0, 1.0);
 
 }

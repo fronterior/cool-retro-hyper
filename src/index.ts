@@ -1,11 +1,11 @@
 import type ReactOrigin from 'react'
 import * as styles from './styles'
 import React from 'react'
-import { CoolRetroHyperConfiguration, HyperState, Terms } from './types'
+import { HyperState, Terms } from './types'
 import { createCRTEffectPasses } from './createCRTEffectPasses'
 import { XTermEffect } from './XTermEffect'
 import { Terminal } from 'xterm'
-import { XTermConnector } from './XtermConnector'
+import { XTermConnector } from './XTermConnector'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -50,7 +50,7 @@ export function decorateHyper(
       Promise.resolve().then(() => this.updateXTerms())
     }
 
-    updateXTerms() {
+    async updateXTerms() {
       const state = window.store.getState()
       const activeRootId = state.termGroups.activeRootGroup
       if (!activeRootId) return
@@ -87,7 +87,7 @@ export function decorateHyper(
 
       if (!CoolRetroHyper.xTermEffect) {
         console.log('Creating CRT effect passes')
-        const crtEffectPasses = createCRTEffectPasses()
+        const crtEffectPasses = await createCRTEffectPasses(connectOptions)
 
         CoolRetroHyper.xTermEffect = new XTermEffect(crtEffectPasses)
 

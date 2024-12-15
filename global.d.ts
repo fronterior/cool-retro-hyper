@@ -28,4 +28,9 @@ declare module 'postprocessing' {
   }
 }
 
+declare module '*.glsl' {
+  const value: string
+  export default value
+}
+
 export {}
