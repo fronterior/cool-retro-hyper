@@ -1,6 +1,4 @@
-import { RenderPass } from 'postprocessing'
-import { Pass } from 'postprocessing'
-import { EffectComposer } from 'postprocessing'
+import { EffectComposer, Pass, RenderPass } from 'postprocessing'
 import {
   CanvasTexture,
   Clock,
@@ -17,8 +15,9 @@ import {
 } from 'three'
 import { Terminal } from 'xterm'
 
-type ConnectOptions = {
+export type ConnectOptions = {
   fps?: number
+  shaderPaths?: string[]
 }
 
 export class XTermConnector {
