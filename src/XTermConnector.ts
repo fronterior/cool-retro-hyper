@@ -99,6 +99,12 @@ export class XTermConnector {
     )
   }
 
+  getLayers(term: Terminal) {
+    const canvasList = term._core.screenElement.getElementsByTagName('canvas')
+
+    return canvasList
+  }
+
   connect(xTerm: Terminal, passes: Pass[], options: ConnectOptions) {
 
     this.resetScreenElementOpacity()
