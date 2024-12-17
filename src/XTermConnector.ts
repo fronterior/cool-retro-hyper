@@ -106,6 +106,9 @@ export class XTermConnector {
   }
 
   connect(xTerm: Terminal, passes: Pass[], options: ConnectOptions) {
+    if (!this.canvas.parentNode) {
+      document.getElementById('hyper')?.append(this.canvas)
+    }
 
     this.resetScreenElementOpacity()
 
@@ -153,6 +156,9 @@ export class XTermConnector {
       // debounce
       mesh.material.map = texture
     }
+
+    this.syncSize()
+    this.start()
   }
 
   start() {
