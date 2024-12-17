@@ -46,13 +46,6 @@ export class XTermConnector {
   private options: ConnectOptions = {}
 
   constructor() {
-    // event
-    // this.proxyEvents()
-    console.log(
-      `document.getElementById('hyper')`,
-      document.getElementById('hyper'),
-    )
-
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.camera.position.z = 1
 
@@ -63,19 +56,8 @@ export class XTermConnector {
   private syncSize() {
     const { offsetWidth = 1, offsetHeight = 1 } = this.screenElement ?? {}
     const { devicePixelRatio } = window
-    console.log('[syncSize]', offsetWidth, offsetHeight)
 
     this.composer.setSize(offsetWidth, offsetHeight)
-    console.log(
-      'offsetWidth',
-      offsetWidth,
-      'offsetHeight',
-      offsetHeight,
-      'dpRatio',
-      devicePixelRatio,
-      offsetWidth * devicePixelRatio,
-      offsetHeight * devicePixelRatio,
-    )
 
     const uniformValues = {
       aspect: offsetWidth / offsetHeight,
@@ -84,7 +66,6 @@ export class XTermConnector {
         offsetHeight * devicePixelRatio,
       ),
     }
-    console.log('uniformValues', uniformValues)
 
     for (const [uniformKey, uniformValue] of Object.entries(uniformValues)) {
       for (const pass of this.shaderPasses) {
@@ -119,8 +100,6 @@ export class XTermConnector {
   }
 
   connect(xTerm: Terminal, passes: Pass[], options: ConnectOptions) {
-    console.log('[connect]')
-    document.getElementById('hyper')?.append(this.canvas)
 
     this.resetScreenElementOpacity()
 
@@ -167,14 +146,10 @@ export class XTermConnector {
 
       // debounce
       mesh.material.map = texture
-
-      this.syncSize()
-      this.start()
     }
   }
 
   start() {
-    console.log('[render]')
     this.cancelDraw()
 
     const materials = Array.from(
@@ -196,14 +171,11 @@ export class XTermConnector {
       [],
     )
 
-    console.log('materials, timeUniforms', materials, timeUniforms)
-
     const fps = 1000 / (this.options.fps ?? 60)
     const { clock, composer } = this
 
     let previousTime = 0
     let requestAnimationFrameId = requestAnimationFrame(function draw(time) {
-      // console.log('[draw]')
       const dist = time - previousTime
       if (dist < fps) {
         requestAnimationFrame(draw)
@@ -225,7 +197,6 @@ export class XTermConnector {
     })
 
     this.cancelDraw = function cancelDraw() {
-      console.log('[cancelDraw]')
       cancelAnimationFrame(requestAnimationFrameId)
     }
   }

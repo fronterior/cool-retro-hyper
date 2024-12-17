@@ -87,21 +87,6 @@ export function decorateHyper(
         crtEffectPasses.passes,
         connectOptions,
       )
-
-      // if (!CoolRetroHyper.xTermEffect) {
-      //   console.log('Creating CRT effect passes')
-      //
-      //   CoolRetroHyper.xTermEffect = new XTermEffect(crtEffectPasses)
-      //
-      //   for (const { term: xTerm } of visibleTerms) {
-      //     CoolRetroHyper.xTermEffect.attach(xTerm, false)
-      //     CoolRetroHyper.xTermEffect.startAnimationLoop()
-      //   }
-      // } else {
-      //   for (const { term: xTerm } of visibleTerms) {
-      //     CoolRetroHyper.xTermEffect.attach(xTerm, false)
-      //   }
-      // }
     }
 
     getVisibleTermsIdsForRootId(state: HyperState, activeRootId: string) {
