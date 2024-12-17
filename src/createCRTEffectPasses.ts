@@ -50,21 +50,24 @@ export async function createCRTEffectPasses(
     ]),
   })
 
-  new THREE.TextureLoader().load(
-    path.resolve(__dirname, '../src/assets/images/allNoise512.png'),
-    (texture) => {
-      texture.minFilter = THREE.LinearFilter
-      texture.wrapS = THREE.RepeatWrapping
-      texture.wrapT = THREE.RepeatWrapping
-      const noiseSource = retroEffect.uniforms.get('noiseSource')
-      if (noiseSource) noiseSource.value = texture
-    },
-  )
+  await new Promise<void>((res) => {
+    new THREE.TextureLoader().load(
+      path.resolve(__dirname, '../src/assets/images/allNoise512.png'),
+      (texture) => {
+        texture.minFilter = THREE.LinearFilter
+        texture.wrapS = THREE.RepeatWrapping
+        texture.wrapT = THREE.RepeatWrapping
+        const noiseSource = retroEffect.uniforms.get('noiseSource')
+        if (noiseSource) noiseSource.value = texture
+
+        res()
+      },
+    )
+  })
 
   const bloomEffect = new BloomEffect({
     kernelSize: 3,
     blendFunction: BlendFunction.LIGHTEN,
-    // blendFunction: POSTPROCESSING.BlendFunction.AVERAGE,
   })
 
   const frameEffect = new Effect('retro-frame', glsl.retroFrame, {
@@ -107,7 +110,7 @@ export async function createCRTEffectPasses(
     }),
   )
 
-  const userEffectPass = userShaders.map(
+  const userEffectPasses = userShaders.map(
     ({ filePath, code }) =>
       new EffectPass(
         undefined,
@@ -121,7 +124,7 @@ export async function createCRTEffectPasses(
     passes: [
       new EffectPass(undefined, ...scaleEffects),
       new EffectPass(undefined, burnInEffect),
-      ...userEffectPass,
+      ...userEffectPasses,
       new EffectPass(undefined, retroEffect),
       savePass,
       new EffectPass(undefined, bloomEffect),
