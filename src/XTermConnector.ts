@@ -19,6 +19,7 @@ import { Terminal } from 'xterm'
 export type ConnectOptions = {
   fps?: number
   shaderPaths?: string[]
+  coordinateTransform?: (x: number, y: number) => [number, number]
 }
 
 export class XTermConnector {
@@ -43,38 +44,62 @@ export class XTermConnector {
   private resetScreenElementOpacity = () => {}
   private coordinateTransform = (x: number, y: number) => [x, y] as const
 
+  private resizeObserver?: ResizeObserver
+  private debounceTimeout?: NodeJS.Timeout
   private options: ConnectOptions = {}
 
   constructor() {
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.camera.position.z = 1
-
-    // debounce
-    window.addEventListener('resize', this.syncSize.bind(this))
   }
 
-  private syncSize() {
-    const { offsetWidth = 1, offsetHeight = 1 } = this.screenElement ?? {}
-    const { devicePixelRatio } = window
-    const aspect = offsetWidth / offsetHeight
+  private setResizeObserver() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
 
-    this.canvas.width = offsetWidth
-    this.canvas.height = offsetHeight
-    this.renderer.setSize(offsetWidth, offsetHeight, false)
-    this.composer.setSize(offsetWidth, offsetHeight)
+    this.resizeObserver = new ResizeObserver((entries) => {
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout)
+      }
+
+      this.debounceTimeout = setTimeout(() => {
+        const entry = entries[0]
+        if (entry) {
+          const { width, height } = entry.contentRect
+          this.handleResize(width, height)
+        }
+      }, 32)
+    })
+
+    if (this.screenElement) {
+      this.resizeObserver.observe(this.screenElement)
+    }
+  }
+
+  private handleResize(width: number, height: number) {
+    const { devicePixelRatio } = window
+    const aspect = width / height
+
+    this.dispose()
+
+    this.renderer.setSize(width, height, false)
+    this.composer.setSize(width, height)
+
+    this.camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 1, 1000)
+    this.camera.position.z = 1
 
     const uniformValues = {
       aspect,
       resolution: new Vector2(
-        offsetWidth * devicePixelRatio,
-        offsetHeight * devicePixelRatio,
+        width * devicePixelRatio,
+        height * devicePixelRatio,
       ),
     }
 
     for (const [uniformKey, uniformValue] of Object.entries(uniformValues)) {
       for (const pass of this.shaderPasses) {
         const material = pass.fullscreenMaterial as ShaderMaterial
-
         const uniform = material.uniforms[uniformKey]
         if (uniform) {
           uniform.value = uniformValue
@@ -91,16 +116,16 @@ export class XTermConnector {
     }
 
     composer.addPass(this.renderPasse)
-    // if (passes.length) {
-    //   passes[passes.length - 1]!.renderToScreen = true
-    //   for (const pass of passes) {
-    //     composer.addPass(pass)
-    //   }
-    // }
-    //
-    // this.shaderPasses = passes.filter(
-    //   (pass) => pass instanceof Pass && !(pass instanceof EffectPass),
-    // )
+    if (passes.length) {
+      passes[passes.length - 1]!.renderToScreen = true
+      for (const pass of passes) {
+        composer.addPass(pass)
+      }
+    }
+
+    this.shaderPasses = passes.filter(
+      (pass) => pass instanceof Pass && !(pass instanceof EffectPass),
+    )
   }
 
   getLayers(term: Terminal) {
@@ -129,7 +154,14 @@ export class XTermConnector {
       }
     })()
     this.screenElement.style.opacity = '0'
+    this.setResizeObserver()
 
+    this.connectXTerm()
+
+    this.start()
+  }
+
+  private connectXTerm() {
     const xTermCanvasElements =
       this.screenElement.getElementsByTagName('canvas')
 
@@ -157,15 +189,11 @@ export class XTermConnector {
       const texture = new CanvasTexture(xTermLayer)
       texture.minFilter = LinearFilter
 
-      // debounce
       mesh.material.map = texture
     }
-
-    this.syncSize()
-    this.start()
   }
 
-  start() {
+  private start() {
     this.cancelDraw()
 
     const materials = Array.from(
@@ -186,7 +214,6 @@ export class XTermConnector {
       },
       [],
     )
-    console.log('timeUniforms', timeUniforms)
 
     const fps = 1000 / (this.options.fps ?? 60)
     const { clock, composer } = this
@@ -218,7 +245,7 @@ export class XTermConnector {
     }
   }
 
-  handleMouse(ev: MouseEvent) {
+  private handleMouse(ev: MouseEvent) {
     if ((ev as MouseEvent & { syntethic: boolean }).syntethic) {
       return
     }
@@ -246,5 +273,19 @@ export class XTermConnector {
     const clonedEvent = new MouseEvent(copy.type as 'mousedown', copy)
     ;(clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
     ;(copy.target as HTMLElement).dispatchEvent(clonedEvent)
+  }
+
+  private dispose() {
+    this.scene.children.forEach((child) => {
+      if (child instanceof Mesh) {
+        if (child.material instanceof MeshBasicMaterial) {
+          if (child.material.map) {
+            child.material.map.dispose()
+          }
+          child.material.dispose()
+        }
+        child.geometry.dispose()
+      }
+    })
   }
 }
