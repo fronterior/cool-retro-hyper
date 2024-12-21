@@ -56,11 +56,15 @@ export class XTermConnector {
   private syncSize() {
     const { offsetWidth = 1, offsetHeight = 1 } = this.screenElement ?? {}
     const { devicePixelRatio } = window
+    const aspect = offsetWidth / offsetHeight
 
+    this.canvas.width = offsetWidth
+    this.canvas.height = offsetHeight
+    this.renderer.setSize(offsetWidth, offsetHeight, false)
     this.composer.setSize(offsetWidth, offsetHeight)
 
     const uniformValues = {
-      aspect: offsetWidth / offsetHeight,
+      aspect,
       resolution: new Vector2(
         offsetWidth * devicePixelRatio,
         offsetHeight * devicePixelRatio,
@@ -87,16 +91,16 @@ export class XTermConnector {
     }
 
     composer.addPass(this.renderPasse)
-    if (passes.length) {
-      passes[passes.length - 1]!.renderToScreen = true
-      for (const pass of passes) {
-        composer.addPass(pass)
-      }
-    }
-
-    this.shaderPasses = passes.filter(
-      (pass) => pass instanceof Pass && !(pass instanceof EffectPass),
-    )
+    // if (passes.length) {
+    //   passes[passes.length - 1]!.renderToScreen = true
+    //   for (const pass of passes) {
+    //     composer.addPass(pass)
+    //   }
+    // }
+    //
+    // this.shaderPasses = passes.filter(
+    //   (pass) => pass instanceof Pass && !(pass instanceof EffectPass),
+    // )
   }
 
   getLayers(term: Terminal) {
@@ -182,6 +186,7 @@ export class XTermConnector {
       },
       [],
     )
+    console.log('timeUniforms', timeUniforms)
 
     const fps = 1000 / (this.options.fps ?? 60)
     const { clock, composer } = this
