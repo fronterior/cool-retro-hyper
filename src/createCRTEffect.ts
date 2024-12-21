@@ -5,13 +5,13 @@ import * as THREE from 'three'
 import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
 import { EffectPass } from 'postprocessing'
 import * as glsl from './glsl'
-import { CoolRetroHyperConfiguration } from './types'
+import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 
 const userShaderCache: Record<string, Promise<string>> = {}
 
-export async function createCRTEffectPasses(
+export async function createCRTEffect(
   options: CoolRetroHyperConfiguration = {},
-) {
+): Promise<CRTEffect> {
   const saveTarget = new THREE.WebGLRenderTarget(
     window.innerWidth,
     window.innerHeight,

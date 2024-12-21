@@ -2,8 +2,7 @@ import type ReactOrigin from 'react'
 import * as styles from './styles'
 import React from 'react'
 import { HyperState, Terms } from './types'
-import { createCRTEffectPasses } from './createCRTEffectPasses'
-import { XTermEffect } from './XTermEffect'
+import { createCRTEffect } from './createCRTEffect'
 import { Terminal } from 'xterm'
 import { XTermConnector } from './XTermConnector'
 
@@ -80,11 +79,11 @@ export function decorateHyper(
         window.config.getConfig()?.coolRetroHyper ?? {},
       )
 
-      const crtEffectPasses = await createCRTEffectPasses(connectOptions)
+      const crtEffect = await createCRTEffect(connectOptions)
 
       CoolRetroHyper.xTermConnector.connect(
         firstVisibleTerm.term,
-        crtEffectPasses.passes,
+        crtEffect,
         connectOptions,
       )
     }

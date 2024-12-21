@@ -1,11 +1,17 @@
+import { Pass } from 'postprocessing'
 import type { FontWeight, Terminal } from 'xterm'
 
-// https://github.com/vercel/hyper/blob/2a7bb18259d975f27b30b502af1be7576f6f5656/typings/config.d.ts
 export type CoolRetroHyperConfiguration = {
   fps?: number
   shaderPaths?: string[]
 }
 
+export type CRTEffect = {
+  passes: Pass[]
+  coordinateTransform?: (x: number, y: number) => [number, number]
+}
+
+// https://github.com/vercel/hyper/blob/2a7bb18259d975f27b30b502af1be7576f6f5656/typings/config.d.ts
 export type ITermGroup = {
   uid: string
   sessionUid: string | null

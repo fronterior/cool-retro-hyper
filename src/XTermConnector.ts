@@ -15,6 +15,7 @@ import {
   WebGLRenderer,
 } from 'three'
 import { Terminal } from 'xterm'
+import { CRTEffect } from './types'
 
 export type ConnectOptions = {
   fps?: number
@@ -134,16 +135,16 @@ export class XTermConnector {
     return canvasList
   }
 
-  connect(xTerm: Terminal, passes: Pass[], options: ConnectOptions) {
+  connect(xTerm: Terminal, crtEffect: CRTEffect, options: ConnectOptions) {
     if (!this.canvas.parentNode) {
       document.getElementById('hyper')?.append(this.canvas)
     }
 
     this.resetScreenElementOpacity()
 
-    this.setPasses(passes)
+    this.setPasses(crtEffect.passes)
     this.options = options
-    this.passes = passes
+    this.passes = crtEffect.passes
     this.screenElement = xTerm._core.screenElement
 
     this.resetScreenElementOpacity = (() => {
