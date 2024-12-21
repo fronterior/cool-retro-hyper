@@ -41,9 +41,9 @@ export class XTermConnector {
   private passes: Pass[] = []
   private screenElement: HTMLElement
 
-  private cancelDraw = () => {}
-  private resetScreenElementOpacity = () => {}
-  private removeMouseHandlers = () => {}
+  private cancelDraw = () => { }
+  private resetScreenElementOpacity = () => { }
+  private removeMouseHandlers = () => { }
   private coordinateTransform = (x: number, y: number) => [x, y] as const
 
   private resizeObserver?: ResizeObserver
@@ -164,18 +164,20 @@ export class XTermConnector {
     if (typeof crtEffect.coordinateTransform === 'function') {
       this.coordinateTransform = crtEffect.coordinateTransform
       this.removeMouseHandlers = (() => {
-        const handle = this.handleMouse.bind(this)
+        const handle = this.handleEvent.bind(this)
 
         this.canvas.addEventListener('mousedown', handle)
         this.canvas.addEventListener('mousemove', handle)
         this.canvas.addEventListener('mouseup', handle)
         this.canvas.addEventListener('click', handle)
+        this.canvas.addEventListener('wheel', handle)
 
         return () => {
           this.canvas.removeEventListener('mousedown', handle)
           this.canvas.removeEventListener('mousemove', handle)
           this.canvas.removeEventListener('mouseup', handle)
           this.canvas.removeEventListener('click', handle)
+          this.canvas.removeEventListener('wheel', handle)
         }
       })()
     }
@@ -267,7 +269,7 @@ export class XTermConnector {
     }
   }
 
-  private handleMouse(ev: MouseEvent) {
+  private handleEvent(ev: MouseEvent | WheelEvent) {
     if ((ev as MouseEvent & { syntethic: boolean }).syntethic) {
       return
     }
@@ -283,7 +285,7 @@ export class XTermConnector {
     let x = (clientX - left) / width
     let y = (bottom - clientY) / height
 
-    ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
+      ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
 
     const copy: Record<string, unknown> = {}
     for (const attr in ev) {
@@ -292,8 +294,10 @@ export class XTermConnector {
 
     ;[copy.clientX, copy.clientY] = [x * width + left, bottom - y * height]
 
-    const clonedEvent = new MouseEvent(ev.type, copy)
-    ;(clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
+    const TargetEvent = ev.constructor as typeof MouseEvent | typeof WheelEvent
+
+    const clonedEvent = new TargetEvent(ev.type, copy)
+      ; (clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
     this.screenElement.dispatchEvent(clonedEvent)
   }
 
