@@ -313,8 +313,6 @@ vec3 ACESFitted(vec3 color)
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {   
     vec2 fragCoord = uv * resolution;
-// void mainImage( out vec4 fragColor, in vec2 fragCoord )
-// {
     fragColor = vec4(0.);
     float timer = .65*time+220.;
     //timer=18.5*iMouse.x/resolution.x;

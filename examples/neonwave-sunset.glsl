@@ -389,12 +389,5 @@ void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
 
 
   fragColor = vec4(col * 0.05, 1.0);
-  // fragColor = vec4(0.0, 1.0, 0.0, 1.0);
-
 }
 
-
-
-// void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {   
-//   fragColor = vec4(0.0, 1.0, 0.0, 1.0);
-// }
