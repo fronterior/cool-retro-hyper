@@ -43,6 +43,7 @@ export class XTermConnector {
 
   private cancelDraw = () => {}
   private resetScreenElementOpacity = () => {}
+  private removeMouseHandlers = () => {}
   private coordinateTransform = (x: number, y: number) => [x, y] as const
 
   private resizeObserver?: ResizeObserver
@@ -159,6 +160,26 @@ export class XTermConnector {
 
     this.connectXTerm()
 
+    this.removeMouseHandlers()
+    if (typeof crtEffect.coordinateTransform === 'function') {
+      this.coordinateTransform = crtEffect.coordinateTransform
+      this.removeMouseHandlers = (() => {
+        const handle = this.handleMouse.bind(this)
+
+        this.canvas.addEventListener('mousedown', handle)
+        this.canvas.addEventListener('mousemove', handle)
+        this.canvas.addEventListener('mouseup', handle)
+        this.canvas.addEventListener('click', handle)
+
+        return () => {
+          this.canvas.removeEventListener('mousedown', handle)
+          this.canvas.removeEventListener('mousemove', handle)
+          this.canvas.removeEventListener('mouseup', handle)
+          this.canvas.removeEventListener('click', handle)
+        }
+      })()
+    }
+
     this.start()
   }
 
@@ -262,7 +283,7 @@ export class XTermConnector {
     let x = (clientX - left) / width
     let y = (bottom - clientY) / height
 
-    ;[x, y] = this.coordinateTransform(x, y)
+    ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
 
     const copy: Record<string, unknown> = {}
     for (const attr in ev) {
@@ -271,9 +292,9 @@ export class XTermConnector {
 
     ;[copy.clientX, copy.clientY] = [x * width + left, bottom - y * height]
 
-    const clonedEvent = new MouseEvent(copy.type as 'mousedown', copy)
+    const clonedEvent = new MouseEvent(ev.type, copy)
     ;(clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
-    ;(copy.target as HTMLElement).dispatchEvent(clonedEvent)
+    this.screenElement.dispatchEvent(clonedEvent)
   }
 
   private dispose() {
