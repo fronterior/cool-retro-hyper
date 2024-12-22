@@ -9,6 +9,22 @@ import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 
 const userShaderCache: Record<string, Promise<string>> = {}
 
+const defaultCRTOptions = {
+  burnInTime: 0.4,
+  boom: 3, // 0 ~ 6
+  jitter: 0.4,
+  screenCurvature: 0.1,
+  noise: 0.5,
+  glowingLine: 0.75,
+  flickering: 0.2,
+  ambientLight: 0.5,
+  pixelHeight: 6.0,
+  pixelization: false,
+  rgbSplit: 0.25,
+  rgbSplitXDistance: 0.13,
+  rgbSplitYDistance: 0.08,
+}
+
 export async function createCRTEffect(
   options: CoolRetroHyperConfiguration = {},
 ): Promise<CRTEffect> {
@@ -19,34 +35,52 @@ export async function createCRTEffect(
   )
   const savePass = new CopyPass(saveTarget)
 
+  const burnInTime = options.crt?.burnInTime ?? defaultCRTOptions.burnInTime
+  const boom = options.crt?.boom ?? defaultCRTOptions.boom
+  const jitter = options.crt?.jitter ?? defaultCRTOptions.jitter
+  const screenCurvature =
+    options.crt?.screenCurvature ?? defaultCRTOptions.screenCurvature
+  const noise = options.crt?.noise ?? defaultCRTOptions.noise
+  const glowingLine = options.crt?.glowingLine ?? defaultCRTOptions.glowingLine
+  const flickering = options.crt?.flickering ?? defaultCRTOptions.flickering
+  const ambientLight =
+    options.crt?.ambientLight ?? defaultCRTOptions.ambientLight
+  const pixelHeight = options.crt?.pixelHeight ?? defaultCRTOptions.pixelHeight
+  const pixelization =
+    options.crt?.pixelization ?? defaultCRTOptions.pixelization
+  const rgbSplit = options.crt?.rgbSplit ?? defaultCRTOptions.rgbSplit
+  const rgbSplitXDistance =
+    options.crt?.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance
+  const rgbSplitYDistance =
+    options.crt?.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
+
   const burnInEffect = new Effect('burn-in', glsl.burnIn, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['burnInSource', new THREE.Uniform(saveTarget.texture)],
-      ['burnInTime', new THREE.Uniform(0.4)],
+      ['burnInTime', new THREE.Uniform(burnInTime)],
     ]),
   })
-
-  const jitter = 0.4
-  const screenCurvature = 0.2
 
   const retroEffect = new Effect('retro', glsl.retro, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['fontColor', new THREE.Uniform(new THREE.Vector3(1, 1, 1))],
       ['chromaColor', new THREE.Uniform(2.5)],
-      ['staticNoise', new THREE.Uniform(0.05)],
+      ['staticNoise', new THREE.Uniform(noise * 0.1)],
       ['noiseSource', new THREE.Uniform(1.01)],
       [
         'jitter',
         new THREE.Uniform(new THREE.Vector2(0.001 * jitter, 0.001 * jitter)),
       ],
-      ['glowingLine', new THREE.Uniform(0.075)],
-      ['flickering', new THREE.Uniform(0.2)],
-      ['ambientLight', new THREE.Uniform(0.0005)],
-      ['pixelHeight', new THREE.Uniform(6.0)],
-      ['pixelization', new THREE.Uniform(false)],
-      ['rbgSplit', new THREE.Uniform(0.25)],
+      ['glowingLine', new THREE.Uniform(glowingLine * 0.1)],
+      ['flickering', new THREE.Uniform(flickering)],
+      ['ambientLight', new THREE.Uniform(ambientLight * 0.001)],
+      ['pixelHeight', new THREE.Uniform(pixelHeight)],
+      ['pixelization', new THREE.Uniform(pixelization)],
+      ['rgbSplit', new THREE.Uniform(rgbSplit)],
+      ['rgbSplitXDistance', new THREE.Uniform(rgbSplitXDistance * 0.01)],
+      ['rgbSplitYDistance', new THREE.Uniform(rgbSplitYDistance * 0.01)],
     ]),
   })
 
@@ -66,7 +100,7 @@ export async function createCRTEffect(
   })
 
   const bloomEffect = new BloomEffect({
-    kernelSize: 3,
+    kernelSize: boom,
     blendFunction: BlendFunction.LIGHTEN,
   })
 

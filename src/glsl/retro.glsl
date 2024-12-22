@@ -22,7 +22,9 @@ uniform lowp float ambientLight;
 uniform lowp float pixelHeight;
 uniform bool pixelization;
 
-uniform lowp float rbgSplit;
+uniform lowp float rgbSplit;
+uniform lowp float rgbSplitXDistance;
+uniform lowp float rgbSplitYDistance;
 
 float sum2(vec2 v) {
 	return v.x + v.y;
@@ -92,12 +94,12 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 
 	vec3 txt_color = texture(inputBuffer, coords).rgb;
 
-	if (rbgSplit != 0.0) {
-		vec3 rightColor = texture2D(inputBuffer, coords + vec2( -0.0013, -0.0008)).rgb;
-		vec3 leftColor  = texture2D(inputBuffer, coords + vec2(0.0013, 0.0008)).rgb;
-		txt_color.r = rightColor.r * 0.6 * rbgSplit + txt_color.r * (1.0 - 0.6 * rbgSplit);
-		txt_color.g =  leftColor.g * 0.4 * rbgSplit + txt_color.g * (1.0 - 0.4 * rbgSplit);
-		txt_color.b =  leftColor.b * 0.2 * rbgSplit + txt_color.b * (1.0 - 0.2 * rbgSplit);
+	if (rgbSplit != 0.0) {
+		vec3 rightColor = texture2D(inputBuffer, coords + vec2( -rgbSplitXDistance, -rgbSplitYDistance)).rgb;
+		vec3 leftColor  = texture2D(inputBuffer, coords + vec2(rgbSplitXDistance, rgbSplitYDistance)).rgb;
+		txt_color.r = rightColor.r * 0.6 * rgbSplit + txt_color.r * (1.0 - 0.6 * rgbSplit);
+		txt_color.g =  leftColor.g * 0.4 * rgbSplit + txt_color.g * (1.0 - 0.4 * rgbSplit);
+		txt_color.b =  leftColor.b * 0.2 * rgbSplit + txt_color.b * (1.0 - 0.2 * rgbSplit);
 	}
 
 	float greyscale_color = rgb2grey(txt_color);

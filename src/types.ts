@@ -4,6 +4,21 @@ import type { FontWeight, Terminal } from 'xterm'
 export type CoolRetroHyperConfiguration = {
   fps?: number
   shaderPaths?: string[]
+  crt?: {
+    burnInTime?: number
+    boom?: number
+    jitter?: number
+    screenCurvature?: number
+    noise?: number
+    glowingLine?: number
+    flickering?: number
+    ambientLight?: number
+    pixelHeight?: number
+    pixelization?: number
+    rgbSplit?: number
+    rgbSplitXDistance?: number
+    rgbSplitYDistance?: number
+  }
 }
 
 export type CRTEffect = {
