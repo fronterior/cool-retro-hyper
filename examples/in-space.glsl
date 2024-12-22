@@ -1,6 +1,5 @@
+// @shadertoy
 // https://www.shadertoy.com/view/sldGDf
-
-
 
 // Created by Danil (2021+) https://cohost.org/arugl
 
@@ -26,7 +25,7 @@
 
 
 // divx is number of lines on background
-//#define divx floor(resolution.y/15.)
+//#define divx floor(iResolution.y/15.)
 
 const float divx = 35.;
 #define polar_line_scale (2./divx)
@@ -138,7 +137,7 @@ vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
 //----------end of Common
 
 vec3 get_noise(vec2 p,float timer){
-    vec2 res = resolution.xy/resolution.y;
+    vec2 res = iResolution.xy/iResolution.y;
     vec2 shiftx= res*0.5*1.25+.5*(0.5+0.5*vec2(sin(timer*0.0851),cos(timer*0.0851)));
     vec2 shiftx2= res*0.5*2.+.5*(0.5+0.5*vec2(sin(timer*0.0851),cos(timer*0.0851)));
     vec2 tp = p + shiftx;
@@ -155,7 +154,7 @@ vec3 get_noise(vec2 p,float timer){
 }
 
 vec4 get_lines_color(vec2 p, vec3 n, float timer){
-    vec2 res = resolution.xy/resolution.y;
+    vec2 res = iResolution.xy/iResolution.y;
     
     vec3 col= vec3(0.);
     float a = 1.;
@@ -311,22 +310,23 @@ vec3 ACESFitted(vec3 color)
     return color;
 }
 
-void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {   
-    vec2 fragCoord = uv * resolution;
-    fragColor = vec4(0.);
-    float timer = .65*time+220.;
-    //timer=18.5*iMouse.x/resolution.x;
-    vec2 res = resolution.xy/resolution.y;
-    vec2 uv1 = fragCoord.xy/resolution.y-0.5*res;
-    uv1*=1.;
-    vec3 noisev = get_noise(uv1, timer);
 
-    vec4 lcol = get_lines_color(uv1, noisev, timer);
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    fragColor = vec4(0.);
+    float timer = .65*iTime+220.;
+    //timer=18.5*iMouse.x/iResolution.x;
+    vec2 res = iResolution.xy/iResolution.y;
+    vec2 uv = fragCoord.xy/iResolution.y-0.5*res;
+    uv*=1.;
+    vec3 noisev = get_noise(uv, timer);
+
+    vec4 lcol = get_lines_color(uv, noisev, timer);
 
     //fragColor = vec4(lcol.rgba);
 
     vec3 ro = vec3(1.,40.,1.);
-    vec3 rd = cam(uv1, timer);
+    vec3 rd = cam(uv, timer);
     float cineshader_alpha;
     vec4 planetc = planet(ro,rd,timer,cineshader_alpha);
 
@@ -338,9 +338,11 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
     // extra color correction
     fragColor.rgb = fragColor.rgb*0.15+fragColor.rgb*fragColor.rgb*0.65+(fragColor.rgb*0.7+0.3)*ACESFitted(fragColor.rgb);
     
-    float tfc = fragCoord.x/resolution.x-0.5;
+    float tfc = fragCoord.x/iResolution.x-0.5;
     cineshader_alpha*=((1.-(tfc*tfc*4.))*0.15+0.85);
     fragColor.a = cineshader_alpha;
-    fragColor*=0.04;
-    
+    //fragColor=vec4(cineshader_alpha);
+
+    fragColor *= 0.05;
 }
+

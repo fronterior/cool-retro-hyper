@@ -100,9 +100,23 @@ export async function createCRTEffect(
       const resolvedPath = glslPath.replace(/^~/, os.homedir())
       const normalizedPath = path.normalize(resolvedPath)
 
-      const promise = fs.promises
-        .readFile(normalizedPath)
-        .then((value) => ({ filePath: glslPath, code: value.toString() }))
+      const promise = fs.promises.readFile(normalizedPath).then((value) => {
+        let code = value.toString().replaceAll(/^.*#define PI .*$/gm, '')
+
+        if (code.includes('@shadertoy')) {
+          code =
+            code
+              .replaceAll('iTime', 'time')
+              .replaceAll('iResolution', 'resolution')
+              .replace('mainImage', 'coolRetroHyperShadertoyMainImage') +
+            `\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`
+        }
+
+        return {
+          filePath: glslPath,
+          code,
+        }
+      })
 
       userShaderCache[glslPath] = promise.then(({ code }) => code)
 

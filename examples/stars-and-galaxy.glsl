@@ -1,3 +1,4 @@
+// @shadertoy
 // https://www.shadertoy.com/view/stBcW1
 
 // License CC0: Stars and galaxy
@@ -6,14 +7,13 @@
 // that I liked so sharing it.
 
 // Controls how many layers of stars
-
 #define LAYERS            5.0
 
-// #define PI                3.141592654
-#define TAU               (0.5*PI)
-#define TIME              mod(time, 30.0)
+#define PI                3.141592654
+#define TAU               (2.0*PI)
+#define TIME              mod(iTime, 30.0)
 #define TTIME             (TAU*TIME)
-#define RESOLUTION        resolution
+#define RESOLUTION        iResolution
 #define ROT(a)            mat2(cos(a), sin(a), -sin(a), cos(a))
 
 // License: Unknown, author: nmz (twitter: @stormoid), found: https://www.shadertoy.com/view/NdfyRM
@@ -266,10 +266,8 @@ vec3 color(vec3 ro, vec3 rd, vec3 lp, vec4 md) {
   return col;
 }
 
-void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
-  vec2 fragCoord = uv * resolution;
-
-  vec2 q = fragCoord/resolution.xy;
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  vec2 q = fragCoord/iResolution.xy;
   vec2 p = -1.0 + 2.0*q;
   p.x *= RESOLUTION.x/RESOLUTION.y;
 
@@ -279,19 +277,18 @@ void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
   vec3 la = vec3(1.0, 0.5, 0.0);
   vec3 up = vec3(0.0, 1.0, 0.0);
   la.xz *= ROT(TTIME/60.0-PI/2.0);
-
+  
   vec3 ww = normalize(la - ro);
   vec3 uu = normalize(cross(up, ww));
   vec3 vv = normalize(cross(ww,uu));
   vec3 rd = normalize(p.x*uu + p.y*vv + 2.0*ww);
   vec3 col= color(ro, rd, lp, md);
-
+  
   col *= smoothstep(0.0, 4.0, TIME)*smoothstep(30.0, 26.0, TIME);
   col = aces_approx(col);
   col = sRGB(col);
 
   fragColor = vec4(col,1.0);
-  fragColor *= 0.2; 
-  
+  fragColor *= 0.2;
 }
 

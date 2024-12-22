@@ -1,12 +1,15 @@
+// @shadertoy
+// https://www.shadertoy.com/view/7dtcRj
+
 // License CC0: Neon Sunset
 //  Code is hackish but I thought it looked good enough to share
 //  The music from GTA III - RISE FM, the best radio channel in GTA III IMHO
 #define LAYERS            5.0
-// #define PI                3.141592654
+#define PI                3.141592654
 #define TAU               (2.0*PI)
-#define TIME              time
+#define TIME              iTime
 #define TTIME             (TAU*TIME)
-#define RESOLUTION        resolution
+#define RESOLUTION        iResolution
 #define ROT(a)            mat2(cos(a), sin(a), -sin(a), cos(a))
 
 // License: Unknown, author: nmz (twitter: @stormoid), found: https://www.shadertoy.com/view/NdfyRM
@@ -136,8 +139,8 @@ float synth(vec2 p, float aa, out float h, out float db) {
   float dib = 1E6;
   const int around = 0;
   for (int i = -around; i <=around ;++i) {
+    float fft = 0.1;
     // float fft = texture(iChannel0, vec2((n+float(i))*st, 0.25)).x; 
-    float fft = 0.0;
     fft *= fft;
     if (i == 0) h = fft;
     float dibb = segmentx((p-vec2(st*float(i), 0.0)).yx, fft+0.05)-st*0.4;
@@ -360,9 +363,7 @@ vec3 color(vec3 ro, vec3 rd, vec3 nrd) {
   return col;
 }
 
-void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
-  vec2 fragCoord = uv * RESOLUTION;
-
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 q = fragCoord/RESOLUTION.xy; 
   vec2 p = -1.0 + 2.0*q;
   p.x *= RESOLUTION.x/RESOLUTION.y;
@@ -382,12 +383,13 @@ void mainImage(const in vec4 inputColor, in vec2 uv, out vec4 fragColor) {
 
   vec3 col = vec3(0.1);
   col = color(ro, rd, nrd);
-  // col += synth(p, np);
+//  col += synth(p, np);
   col *= smoothstep(0.0, 4.0, TIME);
   col = aces_approx(col);
   col = sRGB(col); 
 
 
-  fragColor = vec4(col * 0.05, 1.0);
+  fragColor = vec4(col, 1.0);
+  fragColor *= 0.2;
 }
 
