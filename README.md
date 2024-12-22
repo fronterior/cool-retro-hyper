@@ -1,6 +1,8 @@
 # Cool Retro Hyper
 
-![Cool Retro Hyper Logo](https://raw.githubusercontent.com/lowfront/cool-retro-hyper/refs/heads/main/logo.png?token=GHSAT0AAAAAAC253LJZBTWLTRGEO3DI6OAOZ3ILVIA)
+<p align="center">
+    <img src="https://raw.githubusercontent.com/lowfront/cool-retro-hyper/refs/heads/main/logo.png?token=GHSAT0AAAAAAC253LJZBTWLTRGEO3DI6OAOZ3ILVIA" alt="Cool Retro Hyper Logo" style="width: 100px">
+</p>
 
 A Hyper plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 It uses the retro preset from the [hyper-postprocessing](https://github.com/slammayjammay/hyper-postprocessing/blob/198f4271fc97fdd7b79473cd0f4a922b5695af68/examples/effects/retro/index.js) plugin to replicate the CRT monitor effect of cool-retro-term.
