@@ -1,7 +1,7 @@
 {
   "name": "cool-retro-hyper",
   "version": "0.0.1",
-  "description": "",
+  "description": "A Hyper terminal plugin that applies a retro CRT monitor effect.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsup src/index.ts --format=cjs",
@@ -12,8 +12,18 @@
     "type": "git",
     "url": "https://github.com/lowfront/cool-retro-hyper"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "hyper",
+    "hyperterm",
+    "xterm",
+    "retro",
+    "threejs",
+    "postprocessing"
+  ],
+  "author": {
+    "name": "lowfront",
+    "email": "lowfronterior@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
     "postprocessing": "6.36.3",
