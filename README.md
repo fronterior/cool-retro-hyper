@@ -1,7 +1,7 @@
 # Cool Retro Hyper
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/lowfront/cool-retro-hyper/refs/heads/main/logo.png?token=GHSAT0AAAAAAC253LJZBTWLTRGEO3DI6OAOZ3ILVIA" alt="Cool Retro Hyper Logo" style="width: 100px">
+<p align="center" style="margin: 64px 0;">
+  <img src="https://github.com/user-attachments/assets/dff75bc7-1457-47e4-82d7-865549c910a4" alt="Cool Retro Hyper Logo" style="width: 100px">
 </p>
 
 A Hyper plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
