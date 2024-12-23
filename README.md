@@ -1,6 +1,7 @@
 # Cool Retro Hyper
 
 <p align="center" style="margin: 64px 0;">
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" style="height: 64px">
   <img src="https://github.com/user-attachments/assets/dff75bc7-1457-47e4-82d7-865549c910a4" alt="Cool Retro Hyper Logo" style="width: 100px">
 </p>
 
