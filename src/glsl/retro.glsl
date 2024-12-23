@@ -95,7 +95,7 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 	vec3 txt_color = texture(inputBuffer, coords).rgb;
 
 	if (rgbSplit != 0.0) {
-		vec3 rightColor = texture2D(inputBuffer, coords + vec2( -rgbSplitXDistance, -rgbSplitYDistance)).rgb;
+		vec3 rightColor = texture2D(inputBuffer, coords + vec2(-rgbSplitXDistance, -rgbSplitYDistance)).rgb;
 		vec3 leftColor  = texture2D(inputBuffer, coords + vec2(rgbSplitXDistance, rgbSplitYDistance)).rgb;
 		txt_color.r = rightColor.r * 0.6 * rgbSplit + txt_color.r * (1.0 - 0.6 * rgbSplit);
 		txt_color.g =  leftColor.g * 0.4 * rgbSplit + txt_color.g * (1.0 - 0.4 * rgbSplit);
