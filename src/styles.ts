@@ -1,6 +1,10 @@
 // FIXME: add README.md
 export const init = () => {
   const css = `
+.hyper_main {
+  z-index: 1;
+}
+
 .terms_terms.terms_termsNotShifted {
   margin-top: 0 !important;
 }
