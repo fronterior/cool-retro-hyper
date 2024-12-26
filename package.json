@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format=cjs",
     "dev": "pnpm run build --watch",
+    "install:prod": "pnpm install --prod",
+    "build:prod": "tsup src/index.ts --format=cjs --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

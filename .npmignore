@@ -1,0 +1,10 @@
+src/
+.git/
+.DS_Store
+.gitignore
+.prettierrc
+global.d.ts
+logo.png
+pnpm-lock.json
+tsconfig.json
+tsup.config.ts
