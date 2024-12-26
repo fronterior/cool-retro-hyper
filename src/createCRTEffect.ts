@@ -11,7 +11,7 @@ const userShaderCache: Record<string, Promise<string>> = {}
 
 const defaultCRTOptions = {
   burnInTime: 0.4,
-  boom: 3, // 0 ~ 6
+  boom: 3, // 0 ~ 5
   jitter: 0.4,
   screenCurvature: 0.1,
   noise: 0.5,
@@ -176,7 +176,7 @@ export async function createCRTEffect(
       new EffectPass(undefined, retroEffect),
       savePass,
       new EffectPass(undefined, bloomEffect),
-      new EffectPass(undefined, frameEffect),
+      ...(screenCurvature ? [new EffectPass(undefined, frameEffect)] : []),
     ],
     coordinateTransform(x: number, y: number) {
       const cx = x - 0.5

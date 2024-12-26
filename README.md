@@ -9,6 +9,8 @@
 A Hyper plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 It uses the retro preset from the [hyper-postprocessing](https://github.com/slammayjammay/hyper-postprocessing/blob/198f4271fc97fdd7b79473cd0f4a922b5695af68/examples/effects/retro/index.js) plugin to replicate the CRT monitor effect of cool-retro-term.
 
+_It is currently available on macOS and Windows. It has not been tested on Linux yet._
+
 ## Installation
 
 ```
@@ -35,7 +37,7 @@ module.exports = {
     coolRetroHyper: {
       crt: {
         burnInTime: 0.4,
-        boom: 3, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 6
+        boom: 3, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 5
         jitter: 0.4,
         screenCurvature: 0.1,
         noise: 0.5,

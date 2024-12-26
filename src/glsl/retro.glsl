@@ -7,8 +7,6 @@ uniform lowp float chromaColor;
 uniform highp float staticNoise;
 uniform lowp sampler2D noiseSource;
 
-uniform highp float screenCurvature;
-
 uniform lowp float horizontalSyncStrength;
 uniform lowp float horizontalSyncFrequency;
 
