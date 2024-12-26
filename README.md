@@ -15,7 +15,7 @@ It uses the retro preset from the [hyper-postprocessing](https://github.com/slam
 hyper i cool-retro-hyper
 ```
 
-## Cautions
+## ⚠️ Cautions
 
 This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).
 
