@@ -81,18 +81,20 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 	float color = 0.0001;
 
 	// static noise
-	vec2 hash = vec2(
-    fract(sin(dot(fragCoord + time * 0.001, vec2(12.9898, 78.233))) * 43758.5453),
-    fract(sin(dot(fragCoord + time * 0.001, vec2(39.7478, 52.872))) * 43758.5453)
-  );
-
-  float noiseVal = hash.x * hash.y * 1.4;
-
 	float distance = length(vec2(0.5) - fragCoord);
-	// float noiseVal = noiseTexel.a;
-	float noise = staticNoise;
-	noise += distortionScale * 7.0;
-	color += noiseVal * noise * (1.0 - distance * 1.3);
+
+  float hash = fract(sin(dot(fragCoord + vec2(time * 0.001, time * 0.002), 
+  	vec2(12.9898, 78.233))) * 43758.5453);
+
+  float hash2 = fract(sin(dot(fragCoord + vec2(time * 0.002, time * 0.001), 
+    vec2(39.7478, 52.872))) * 43758.5453);
+
+  float noiseVal = mix(hash, hash2, fract(time * 0.001)) * 1.2;
+
+  float noise = staticNoise;
+  noise += distortionScale * 3.0;
+  color += noiseVal * noise * (1.0 - distance * 1.3);
+
 
 	// glowingLine
 	color += randomPass(fragCoord * resolution) * glowingLine * 0.2;
