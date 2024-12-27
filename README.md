@@ -24,15 +24,29 @@ hyper i cool-retro-hyper
 
 ## Demo
 
+### Configuration
+
 <video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" alt="cool-retro-hyper options">
   Your browser does not support the video tag.
 </video>
+
+### GLSL background
+
 <video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
   Your browser does not support the video tag.
 </video>
+
+- [in space](https://www.shadertoy.com/view/sldGDf)
+- [Neonwave Sunset](https://www.shadertoy.com/view/7dtcRj)
+
+### [ASCII PATROL](https://ascii-patrol.com)
+
 <video controls src="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" alt="cool-retro-hyper ascii-patrol">
   Your browser does not support the video tag.
 </video>
+
+### [nSnake](https://github.com/alexdantas/nSnake)
+
 <video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" alt="cool-retro-hyper nsnake">
   Your browser does not support the video tag.
 </video>
