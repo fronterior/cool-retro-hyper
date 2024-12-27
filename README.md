@@ -19,7 +19,8 @@ hyper i cool-retro-hyper
 
 ## ⚠️ Cautions
 
-This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).
+- This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).
+- 👀 Some properties of this plugin may not be easy on the eyes. Adjust the settings to avoid eye strain!
 
 ## Demo
 
