@@ -5,6 +5,10 @@ export const init = () => {
   z-index: 1;
 }
 
+.header_header {
+  opacity: 0;
+}
+
 .terms_terms.terms_termsNotShifted {
   margin-top: 0 !important;
 }
