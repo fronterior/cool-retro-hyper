@@ -54,7 +54,7 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 	vec3 color = texture(inputBuffer, coords).rgb;	// fragColor = vec4(color, 1.0);
 
 	float alpha = 0.0;
-	float outShadowLength = 0.5 * screenCurvature; // 그림자
+	float outShadowLength = 0.65 * screenCurvature;
 	float bazelMargin = 0.007;
 	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-bazelMargin), coords) + smoothstep(vec2(1.0 + bazelMargin), vec2(1.0 + outShadowLength), coords));
 	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);
