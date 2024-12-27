@@ -171,7 +171,7 @@ export async function createCRTEffect(
   return {
     passes: [
       new EffectPass(undefined, ...scaleEffects),
-      new EffectPass(undefined, burnInEffect),
+      ...(burnInEffect ? [new EffectPass(undefined, burnInEffect)] : []),
       ...userEffectPasses,
       new EffectPass(undefined, retroEffect),
       savePass,
