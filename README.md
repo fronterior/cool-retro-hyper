@@ -24,6 +24,19 @@ hyper i cool-retro-hyper
 
 ## Demo
 
+<video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243">
+  Your browser does not support the video tag.
+</video>
+<video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab">
+  Your browser does not support the video tag.
+</video>
+<video controls src="https://github.com/user-attachments/assets/8833325a-1eba-4ace-8528-e2b3ed03c51a">
+  Your browser does not support the video tag.
+</video>
+<video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6">
+  Your browser does not support the video tag.
+</video>
+
 ## Configuration
 
 Configuration values can be omitted, and can input only the necessary values to use.
