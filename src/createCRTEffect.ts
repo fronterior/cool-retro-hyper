@@ -6,7 +6,6 @@ import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
 import { EffectPass } from 'postprocessing'
 import * as glsl from './glsl'
 import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
-import noiseSourceBuffer from '../src/assets/images/allNoise512.png'
 
 const userShaderCache: Record<string, Promise<string>> = {}
 
@@ -85,20 +84,20 @@ export async function createCRTEffect(
     ]),
   })
 
-  const texture = new THREE.DataTexture(
-    noiseSourceBuffer, // Uint8Array 타입의 이미지 버퍼
-    512, // 이미지 너비
-    512, // 이미지 높이
-    THREE.RGBAFormat, // 이미지 포맷
-  )
+  await new Promise<void>((res) => {
+    new THREE.TextureLoader().load(
+      path.resolve(__dirname, '../src/assets/images/allNoise512.png'),
+      (texture) => {
+        texture.minFilter = THREE.LinearFilter
+        texture.wrapS = THREE.RepeatWrapping
+        texture.wrapT = THREE.RepeatWrapping
+        const noiseSource = retroEffect.uniforms.get('noiseSource')
+        if (noiseSource) noiseSource.value = texture
 
-  texture.needsUpdate = true
-  texture.minFilter = THREE.LinearFilter
-  texture.wrapS = THREE.RepeatWrapping
-  texture.wrapT = THREE.RepeatWrapping
-
-  const noiseSource = retroEffect.uniforms.get('noiseSource')
-  if (noiseSource) noiseSource.value = texture
+        res()
+      },
+    )
+  })
 
   const bloomEffect = new BloomEffect({
     kernelSize: boom,
