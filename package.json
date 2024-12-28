@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lowfront/cool-retro-hyper"
+    "url": "https://github.com/fronterior/cool-retro-hyper"
   },
   "keywords": [
     "hyper",
@@ -22,7 +22,7 @@
     "postprocessing"
   ],
   "author": {
-    "name": "lowfront",
+    "name": "fronterior",
     "email": "lowfronterior@gmail.com"
   },
   "license": "MIT",
