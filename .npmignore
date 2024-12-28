@@ -1,4 +1,5 @@
-src/
+src/*
+!src/assets/images/allNoise512.png
 .git/
 node_modules/
 examples/
@@ -10,3 +11,4 @@ logo.png
 pnpm-lock.json
 tsconfig.json
 tsup.config.ts
+
