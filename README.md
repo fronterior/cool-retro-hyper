@@ -25,43 +25,6 @@ hyper i cool-retro-hyper
 - This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).
 - 👀 Some properties of this plugin may not be easy on the eyes. Adjust the settings to avoid eye strain!
 
-## Demo
-
-### Configuration
-
-<video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" alt="cool-retro-hyper options">
-  Your browser does not support the video tag.
-</video>
-
-### GLSL background
-
-#### New File
-
-<video controls src="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" alt="cool-retro-hyper glsl examples">
-  Your browser does not support the video tag.
-</video>
-
-#### Example Files
-
-<video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
-  Your browser does not support the video tag.
-</video>
-
-- [in space](https://www.shadertoy.com/view/sldGDf)
-- [Neonwave Sunset](https://www.shadertoy.com/view/7dtcRj)
-
-### [ASCII PATROL](https://ascii-patrol.com)
-
-<video controls src="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" alt="cool-retro-hyper ascii-patrol">
-  Your browser does not support the video tag.
-</video>
-
-### [nSnake](https://github.com/alexdantas/nSnake)
-
-<video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" alt="cool-retro-hyper nsnake">
-  Your browser does not support the video tag.
-</video>
-
 ## Configuration
 
 Configuration values can be omitted, and can input only the necessary values to use.
@@ -139,3 +102,40 @@ For example, clone this repository into your home directory and configure it as 
 ```
 
 ⚠️ Note: Currently, only iTime and iResolution are supported. Other uniforms require manual code conversion.
+
+## Demo
+
+### Configuration
+
+<video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" alt="cool-retro-hyper options">
+  Your browser does not support the video tag.
+</video>
+
+### GLSL background
+
+#### New File
+
+<video controls src="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" alt="cool-retro-hyper glsl examples">
+  Your browser does not support the video tag.
+</video>
+
+#### Example Files
+
+<video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
+  Your browser does not support the video tag.
+</video>
+
+- [in space](https://www.shadertoy.com/view/sldGDf)
+- [Neonwave Sunset](https://www.shadertoy.com/view/7dtcRj)
+
+### [ASCII PATROL](https://ascii-patrol.com)
+
+<video controls src="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" alt="cool-retro-hyper ascii-patrol">
+  Your browser does not support the video tag.
+</video>
+
+### [nSnake](https://github.com/alexdantas/nSnake)
+
+<video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" alt="cool-retro-hyper nsnake">
+  Your browser does not support the video tag.
+</video>
