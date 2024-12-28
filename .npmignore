@@ -1,5 +1,7 @@
 src/
 .git/
+node_modules/
+examples/
 .DS_Store
 .gitignore
 .prettierrc

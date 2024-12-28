@@ -4,4 +4,5 @@ export default defineConfig({
   loader: {
     '.glsl': 'text',
   },
+  noExternal: ['three', 'postprocessing'],
 })

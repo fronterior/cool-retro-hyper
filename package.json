@@ -4,10 +4,9 @@
   "description": "A Hyper terminal plugin that applies a retro CRT monitor effect.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsup src/index.ts --format=cjs",
+    "build": "tsup src/index.ts --format cjs",
     "dev": "pnpm run build --watch",
-    "install:prod": "pnpm install --prod",
-    "build:prod": "tsup src/index.ts --format=cjs --minify",
+    "build:prod": "tsup src/index.ts --format cjs --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
