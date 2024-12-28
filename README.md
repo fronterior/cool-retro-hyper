@@ -9,6 +9,9 @@
 A Hyper plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 It uses the retro preset from the [hyper-postprocessing](https://github.com/slammayjammay/hyper-postprocessing/blob/198f4271fc97fdd7b79473cd0f4a922b5695af68/examples/effects/retro/index.js) plugin to replicate the CRT monitor effect of cool-retro-term.
 
+![Cool Retro Hyper Screenshot](https://github.com/user-attachments/assets/e1f3a39e-99c1-4559-adb7-878e08529e09)
+_screenshot with mrange's [Neonwave Sunset](https://www.shadertoy.com/view/7dtcRj) set as the background._
+
 _It is currently available on macOS and Windows. It has not been tested on Linux yet._
 
 ## Installation
@@ -31,6 +34,14 @@ hyper i cool-retro-hyper
 </video>
 
 ### GLSL background
+
+#### New File
+
+<video controls src="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" alt="cool-retro-hyper glsl examples">
+  Your browser does not support the video tag.
+</video>
+
+#### Example Files
 
 <video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
   Your browser does not support the video tag.
