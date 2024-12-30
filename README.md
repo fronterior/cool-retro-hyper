@@ -6,7 +6,7 @@
   <br><br><br><br>
 </p>
 
-A Hyper plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
+A [Hyper](https://hyper.is) plugin inspired by [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 It uses the retro preset from the [hyper-postprocessing](https://github.com/slammayjammay/hyper-postprocessing/blob/198f4271fc97fdd7b79473cd0f4a922b5695af68/examples/effects/retro/index.js) plugin to replicate the CRT monitor effect of cool-retro-term.
 
 ![Cool Retro Hyper Screenshot](https://github.com/user-attachments/assets/e1f3a39e-99c1-4559-adb7-878e08529e09)
@@ -71,7 +71,7 @@ You can input a GLSL file to use as the background. You can provide the input ei
 }
 ```
 
-The GLSL file is loaded through the postprocessing package, and the mainImage function has the following interface.
+The GLSL file is loaded through the [postprocessing](https://www.npmjs.com/package/postprocessing) package, and the mainImage function has the following interface.
 
 ```glsl
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
@@ -108,7 +108,9 @@ For example, clone this repository into your home directory and configure it as 
 ### Configuration
 
 <video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" alt="cool-retro-hyper options">
-  Your browser does not support the video tag.
+  <a href="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" target="_blank">
+    <img src="" alt="cool-retro-hyper options">
+  </a>
 </video>
 
 ### GLSL background
@@ -116,13 +118,17 @@ For example, clone this repository into your home directory and configure it as 
 #### New File
 
 <video controls src="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" alt="cool-retro-hyper glsl examples">
-  Your browser does not support the video tag.
+  <a href="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" target="_blank">
+    <img src="" alt="cool-retro-hyper glsl examples">
+  </a>
 </video>
 
 #### Example Files
 
 <video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
-  Your browser does not support the video tag.
+  <a href="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" target="_blank">
+    <img src="" alt="cool-retro-hyper glsl examples">
+    </a>
 </video>
 
 - [in space](https://www.shadertoy.com/view/sldGDf)
@@ -131,11 +137,15 @@ For example, clone this repository into your home directory and configure it as 
 ### [ASCII PATROL](https://ascii-patrol.com)
 
 <video controls src="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" alt="cool-retro-hyper ascii-patrol">
-  Your browser does not support the video tag.
+  <a href="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" target="_blank">
+    <img src="" alt="cool-retro-hyper ascii-patrol">
+  </a>
 </video>
 
 ### [nSnake](https://github.com/alexdantas/nSnake)
 
 <video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" alt="cool-retro-hyper nsnake">
-  Your browser does not support the video tag.
+  <a href="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" target="_blank">
+    <img src="" alt="cool-retro-hyper nsnake">
+  </a>
 </video>
