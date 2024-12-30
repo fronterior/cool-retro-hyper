@@ -2,6 +2,7 @@
 
 uniform lowp float screenCurvature;
 uniform lowp vec3 frameColor;
+uniform lowp float bazelSize;
 
 vec2 distortCoordinates(vec2 coords){
 	vec2 cc = (coords - vec2(0.5, 0.5));
@@ -55,8 +56,10 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 
 	float alpha = 0.0;
 	float outShadowLength = 0.65 * screenCurvature;
-	float bazelMargin = 0.007;
-	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-bazelMargin), coords) + smoothstep(vec2(1.0 + bazelMargin), vec2(1.0 + outShadowLength), coords));
+	 
+	float XbazelMargin = bazelSize * 0.01;
+	float YbazelMargin = XbazelMargin * resolution.x / resolution.y;
+	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-XbazelMargin, -YbazelMargin), coords) + smoothstep(vec2(1.0 + XbazelMargin, 1.0 + YbazelMargin), vec2(1.0 + outShadowLength), coords));
 	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);
 	color += frameColor * outShadow;
 

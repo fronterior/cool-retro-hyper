@@ -23,6 +23,7 @@ const defaultCRTOptions = {
   rgbSplit: 0.25,
   rgbSplitXDistance: 0.13,
   rgbSplitYDistance: 0.08,
+  bazelSize: 0.4,
 }
 
 export async function createCRTEffect(
@@ -53,6 +54,7 @@ export async function createCRTEffect(
     options.crt?.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance
   const rgbSplitYDistance =
     options.crt?.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
+  const bazelSize = options.crt?.bazelSize ?? defaultCRTOptions.bazelSize
 
   const burnInEffect = new Effect('burn-in', glsl.burnIn, {
     blendFunction: BlendFunction.NORMAL,
@@ -112,6 +114,7 @@ export async function createCRTEffect(
         new THREE.Uniform(new THREE.Vector3(25 / 255, 25 / 255, 25 / 255)),
       ],
       ['screenCurvature', new THREE.Uniform(screenCurvature)],
+      ['bazelSize', new THREE.Uniform(bazelSize)],
     ]),
   })
 
