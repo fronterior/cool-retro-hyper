@@ -16,10 +16,12 @@
   "keywords": [
     "hyper",
     "hyperterm",
+    "hyper-plugin",
     "xterm",
     "retro",
     "threejs",
-    "postprocessing"
+    "postprocessing",
+    "glsl"
   ],
   "author": {
     "name": "fronterior",

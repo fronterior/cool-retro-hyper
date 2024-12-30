@@ -1,4 +1,3 @@
-// FIXME: add README.md
 export const init = () => {
   const css = `
 .hyper_main {
@@ -37,8 +36,6 @@ canvas.cool-retro-hyper {
   const style = Object.assign(document.createElement('style'), {
     innerHTML: css,
   })
-
-  console.log(style)
 
   document.head.append(style)
 }
