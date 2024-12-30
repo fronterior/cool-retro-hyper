@@ -1,6 +1,6 @@
 {
   "name": "cool-retro-hyper",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Hyper terminal plugin that applies a retro CRT monitor effect.",
   "main": "dist/index.js",
   "scripts": {
