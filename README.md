@@ -110,7 +110,7 @@ For example, clone this repository into your home directory and configure it as 
 
 <video controls src="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" alt="cool-retro-hyper options">
   <a href="https://github.com/user-attachments/assets/b8e39003-fe42-4345-8cef-427fe390c243" target="_blank">
-    <img src="" alt="cool-retro-hyper options">
+    <img src="https://github.com/user-attachments/assets/b86a91eb-b816-4d8b-910c-f82d8b9e55f4" alt="cool-retro-hyper options">
   </a>
 </video>
 
@@ -120,7 +120,7 @@ For example, clone this repository into your home directory and configure it as 
 
 <video controls src="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" alt="cool-retro-hyper glsl examples">
   <a href="https://github.com/user-attachments/assets/28d69bd6-03ea-4a0d-b609-0d477b78387e" target="_blank">
-    <img src="" alt="cool-retro-hyper glsl examples">
+    <img src="https://github.com/user-attachments/assets/b656d8a7-2af7-4b5b-be40-8a62a19a8619" alt="cool-retro-hyper glsl examples">
   </a>
 </video>
 
@@ -128,7 +128,7 @@ For example, clone this repository into your home directory and configure it as 
 
 <video controls src="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" alt="cool-retro-hyper glsl examples">
   <a href="https://github.com/user-attachments/assets/271c3156-8ce9-491b-a6f9-6fccfea20bab" target="_blank">
-    <img src="" alt="cool-retro-hyper glsl examples">
+    <img src="https://github.com/user-attachments/assets/f64754ce-6f84-4ec5-8a66-ef28599b74dc" alt="cool-retro-hyper glsl examples">
     </a>
 </video>
 
@@ -139,7 +139,7 @@ For example, clone this repository into your home directory and configure it as 
 
 <video controls src="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" alt="cool-retro-hyper ascii-patrol">
   <a href="https://github.com/user-attachments/assets/19fd6ad0-0743-40bc-9799-4381728754f0" target="_blank">
-    <img src="" alt="cool-retro-hyper ascii-patrol">
+    <img src="https://github.com/user-attachments/assets/6c8699f4-9802-4e06-ab56-7a15103112b9" alt="cool-retro-hyper ascii-patrol">
   </a>
 </video>
 
@@ -147,6 +147,6 @@ For example, clone this repository into your home directory and configure it as 
 
 <video controls src="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" alt="cool-retro-hyper nsnake">
   <a href="https://github.com/user-attachments/assets/c3fcdb3c-7edf-4c58-a3c0-1f77df7a89f6" target="_blank">
-    <img src="" alt="cool-retro-hyper nsnake">
+    <img src="https://github.com/user-attachments/assets/254e2616-7ed0-460a-b488-1e5f3dd8cb36" alt="cool-retro-hyper nsnake">
   </a>
 </video>
