@@ -14,7 +14,7 @@ const defaultCRTOptions = {
   boom: 3, // 0 ~ 5
   jitter: 0.4,
   screenCurvature: 0.1,
-  noise: 0.5,
+  noise: 0.4,
   glowingLine: 0.75,
   flickering: 0.2,
   ambientLight: 0.5,
