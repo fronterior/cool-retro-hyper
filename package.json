@@ -23,6 +23,11 @@
     "postprocessing",
     "glsl"
   ],
+  "homepage": "https://github.com/fronterior/cool-retro-hyper#readme",
+  "bugs": {
+    "url": "https://github.com/fronterior/cool-retro-hyper/issues",
+    "email": "lowfronterior@gmail.com"
+  },
   "author": {
     "name": "fronterior",
     "email": "lowfronterior@gmail.com"
