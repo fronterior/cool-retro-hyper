@@ -20,6 +20,22 @@ _It is currently available on macOS and Windows. It has not been tested on Linux
 hyper i cool-retro-hyper
 ```
 
+After installing the plugin using the above command, add the following to .hyper.js.
+
+```js
+// ~/.hyper.js
+
+module.exports = {
+  ...
+
+  plugins: [
+    'cool-retro-hyper'
+  ],
+
+  ...
+}
+```
+
 ## ⚠️ Cautions
 
 - This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).

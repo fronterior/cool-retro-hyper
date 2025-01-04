@@ -21,7 +21,8 @@
     "retro",
     "threejs",
     "postprocessing",
-    "glsl"
+    "glsl",
+    "crt"
   ],
   "homepage": "https://github.com/fronterior/cool-retro-hyper#readme",
   "bugs": {
