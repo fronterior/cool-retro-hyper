@@ -61,7 +61,8 @@ vec4 texture(sampler2D buf, vec2 uv) {
 }
 
 float noise(vec2 uv) {
-  vec2 v = vec2(uv.x + time * 0.5, uv.y + sin(time) * 0.5);
+	float limitedTime = mod(time, 10.0);
+  vec2 v = vec2(uv.x + limitedTime * 0.5, uv.y + sin(limitedTime) * 0.5);
 
   return fract(sin(dot(v, vec2(12.9898, 78.233))) * 43758.5453);  
 }
