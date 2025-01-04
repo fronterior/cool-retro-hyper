@@ -67,14 +67,14 @@ float noise(vec2 uv) {
   return fract(sin(dot(v, vec2(12.9898, 78.233))) * 43758.5453);  
 }
 
-void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragColor) {
+void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 	vec2 initialCoords = vec2(fract(time/2.0), fract(time/PI));
 	vec4 initialNoiseTexel = texture2D(noiseSource, initialCoords);
 	float randval = initialNoiseTexel.r;
 	float distortionScale = step(1.0 - horizontalSyncFrequency, randval) * randval * horizontalSyncStrength * 0.1;
 	float distortionFreq = mix(4.0, 40.0, initialNoiseTexel.g);
 
-	vec2 coords = fragCoord;
+	vec2 coords = uv;
 
 	float dst = sin((coords.y + time) * distortionFreq);
 	coords.x += dst * distortionScale;
@@ -84,23 +84,23 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 	// jitter
 	vec2 offset = vec2(noiseTexel.b, noiseTexel.a) - vec2(0.5);
 	coords += offset * jitter;
-
+	coords = clamp(coords, 0.0, 1.0);
+  
 	float color = 0.0001;
 
 	// static noise
-	float distance = length(vec2(0.5) - fragCoord);
+	float distance = length(vec2(0.5) - uv);
 
-  vec2 uv = fragCoord.xy / resolution.xy;
-  uv *= 10.0;
+  vec2 scaledUv = uv * 10.0;
   
-  float noiseValue = noise(uv + noise(uv.yx));
+  float noiseValue = noise(scaledUv + noise(scaledUv.yx));
 
   noiseValue += distortionScale * 3.0;
   color += staticNoise * noiseValue * (1.0 - distance * 1.3);
 
 
 	// glowingLine
-	color += randomPass(fragCoord * resolution) * glowingLine * 0.2;
+	color += randomPass(uv * resolution) * glowingLine * 0.2;
 
 	vec3 txt_color = texture(inputBuffer, coords).rgb;
 
@@ -113,7 +113,7 @@ void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragC
 	}
 
 	float greyscale_color = rgb2grey(txt_color);
-	float reflectionMask = sum2(step(vec2(0.0), fragCoord) - step(vec2(1.0), fragCoord));
+	float reflectionMask = sum2(step(vec2(0.0), uv) - step(vec2(1.0), uv));
 	reflectionMask = clamp(reflectionMask, 0.0, 1.0);
 
 	vec3 foregroundColor = mix(fontColor, txt_color * fontColor / greyscale_color, chromaColor);
