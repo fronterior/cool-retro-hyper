@@ -56,7 +56,7 @@ module.exports = {
       crt: {
         burnInTime: 0.4,
         boom: 3, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 5
-        jitter: 0.4,
+        jitter: 0.8,
         screenCurvature: 0.1,
         noise: 0.4,
         glowingLine: 0.75,
