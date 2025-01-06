@@ -1,13 +1,8 @@
-import fs from 'fs'
-import path from 'path'
-import os from 'os'
 import * as THREE from 'three'
 import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
 import { EffectPass } from 'postprocessing'
-import * as glsl from './glsl'
+import type * as glsl from './glsl'
 import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
-
-const userShaderCache: Record<string, Promise<string>> = {}
 
 const defaultCRTOptions = {
   bloom: 2, // 0 ~ 5
@@ -26,9 +21,19 @@ const defaultCRTOptions = {
   bazelSize: 0.4,
 }
 
-export async function createCRTEffect(
-  options: CoolRetroHyperConfiguration = {},
-): Promise<CRTEffect> {
+type CreateCRTEffectParameters = {
+  options: CoolRetroHyperConfiguration
+  noiseTexture: THREE.Texture
+  userEffectPasses: EffectPass[]
+  glslEffects: typeof glsl
+}
+
+export function createCRTEffect({
+  options,
+  noiseTexture,
+  userEffectPasses,
+  glslEffects,
+}: CreateCRTEffectParameters): CRTEffect {
   const saveTarget = new THREE.WebGLRenderTarget(
     window.innerWidth,
     window.innerHeight,
@@ -56,7 +61,7 @@ export async function createCRTEffect(
     options.crt?.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
   const bazelSize = options.crt?.bazelSize ?? defaultCRTOptions.bazelSize
 
-  const burnInEffect = new Effect('burn-in', glsl.burnIn, {
+  const burnInEffect = new Effect('burn-in', glslEffects.burnIn, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['burnInSource', new THREE.Uniform(saveTarget.texture)],
@@ -64,7 +69,7 @@ export async function createCRTEffect(
     ]),
   })
 
-  const retroEffect = new Effect('retro', glsl.retro, {
+  const retroEffect = new Effect('retro', glslEffects.retro, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       ['fontColor', new THREE.Uniform(new THREE.Vector3(1, 1, 1))],
@@ -86,27 +91,15 @@ export async function createCRTEffect(
     ]),
   })
 
-  await new Promise<void>((res) => {
-    new THREE.TextureLoader().load(
-      path.resolve(__dirname, '../src/assets/images/allNoise512.png'),
-      (texture) => {
-        texture.minFilter = THREE.LinearFilter
-        texture.wrapS = THREE.RepeatWrapping
-        texture.wrapT = THREE.RepeatWrapping
-        const noiseSource = retroEffect.uniforms.get('noiseSource')
-        if (noiseSource) noiseSource.value = texture
-
-        res()
-      },
-    )
-  })
+  const noiseSource = retroEffect.uniforms.get('noiseSource')
+  if (noiseSource) noiseSource.value = noiseTexture
 
   const bloomEffect = new BloomEffect({
     kernelSize: bloom,
     blendFunction: BlendFunction.LIGHTEN,
   })
 
-  const frameEffect = new Effect('retro-frame', glsl.retroFrame, {
+  const frameEffect = new Effect('retro-frame', glslEffects.retroFrame, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       [
@@ -119,57 +112,13 @@ export async function createCRTEffect(
   })
 
   const scaleEffects = [
-    new Effect('scale', glsl.scale, { defines: new Map([['scale', '0.985']]) }),
-    new Effect('sampling', glsl.sampling, {
+    new Effect('scale', glslEffects.scale, {
+      defines: new Map([['scale', '0.985']]),
+    }),
+    new Effect('sampling', glslEffects.sampling, {
       blendFunction: BlendFunction.NORMAL,
     }),
   ]
-
-  const userShaders = await Promise.all(
-    (options.shaderPaths ?? []).map((glslPath: string) => {
-      if (glslPath in userShaderCache) {
-        return userShaderCache[glslPath]!.then((code) => ({
-          filePath: glslPath,
-          code,
-        }))
-      }
-
-      const resolvedPath = glslPath.replace(/^~/, os.homedir())
-      const normalizedPath = path.normalize(resolvedPath)
-
-      const promise = fs.promises.readFile(normalizedPath).then((value) => {
-        let code = value.toString().replaceAll(/^.*#define PI .*$/gm, '')
-
-        if (code.includes('@shadertoy')) {
-          code =
-            code
-              .replaceAll('iTime', 'time')
-              .replaceAll('iResolution', 'resolution')
-              .replace('mainImage', 'coolRetroHyperShadertoyMainImage') +
-            `\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`
-        }
-
-        return {
-          filePath: glslPath,
-          code,
-        }
-      })
-
-      userShaderCache[glslPath] = promise.then(({ code }) => code)
-
-      return promise
-    }),
-  )
-
-  const userEffectPasses = userShaders.map(
-    ({ filePath, code }) =>
-      new EffectPass(
-        undefined,
-        new Effect(filePath.split('/').pop()!, code, {
-          blendFunction: BlendFunction.SCREEN,
-        }),
-      ),
-  )
 
   return {
     passes: [

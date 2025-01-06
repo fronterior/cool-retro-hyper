@@ -5,6 +5,9 @@ import { HyperState, Terms } from './types'
 import { createCRTEffect } from './createCRTEffect'
 import { Terminal } from 'xterm'
 import { XTermConnector } from './XTermConnector'
+import { loadUserShaders, noiseTexturePromise } from './utils'
+import { EffectPass } from 'postprocessing'
+import * as glsl from './glsl'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -30,14 +33,28 @@ export function decorateHyper(
       fps: 60,
     }
 
-    static xTermEffect: XTermEffect
     static xTermConnector = new XTermConnector()
+    static noiseTexturePromise = noiseTexturePromise
+    static userEffectPassesPromise: Promise<EffectPass[]>
 
     private hyper: HyperComponent
+
+    private noiseTexture!: Awaited<typeof CoolRetroHyper.noiseTexturePromise>
+    private userEffectPasses: EffectPass[] = []
 
     constructor(props: HyperComponentProps, context: Record<string, unknown>) {
       super(props, context)
       this.onDecorated = this.onDecorated.bind(this)
+
+      CoolRetroHyper.noiseTexturePromise.then(
+        (texture) => (this.noiseTexture = texture),
+      )
+      CoolRetroHyper.userEffectPassesPromise = (
+        CoolRetroHyper.userEffectPassesPromise ??
+        loadUserShaders(
+          window.config.getConfig()?.coolRetroHyper?.shaderPaths ?? [],
+        )
+      ).then((userEffectPasses) => (this.userEffectPasses = userEffectPasses))
     }
 
     onDecorated(terms: HyperComponent) {
@@ -46,10 +63,17 @@ export function decorateHyper(
     }
 
     componentDidUpdate() {
-      Promise.resolve().then(() => this.updateXTerms())
+      Promise.resolve()
+        .then(() =>
+          Promise.all([
+            CoolRetroHyper.noiseTexturePromise,
+            CoolRetroHyper.userEffectPassesPromise,
+          ]),
+        )
+        .then(() => this.updateXTerms())
     }
 
-    async updateXTerms() {
+    updateXTerms() {
       const state = window.store.getState()
       const activeRootId = state.termGroups.activeRootGroup
       if (!activeRootId) return
@@ -73,18 +97,23 @@ export function decorateHyper(
         return
       }
 
-      const connectOptions = Object.assign(
+      const options = Object.assign(
         {},
         CoolRetroHyper.defaultConfig,
         window.config.getConfig()?.coolRetroHyper ?? {},
       )
 
-      const crtEffect = await createCRTEffect(connectOptions)
+      const crtEffect = createCRTEffect({
+        options,
+        noiseTexture: this.noiseTexture,
+        userEffectPasses: this.userEffectPasses,
+        glslEffects: glsl,
+      })
 
       CoolRetroHyper.xTermConnector.connect(
         firstVisibleTerm.term,
         crtEffect,
-        connectOptions,
+        options,
       )
     }
 
