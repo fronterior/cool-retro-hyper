@@ -7,7 +7,7 @@ import { Terminal } from 'xterm'
 import { XTermConnector } from './XTermConnector'
 import { loadUserShaders, noiseTexturePromise } from './utils'
 import { EffectPass } from 'postprocessing'
-import * as glsl from './glsl'
+import * as glslEffects from './glsl'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -107,7 +107,7 @@ export function decorateHyper(
         options,
         noiseTexture: this.noiseTexture,
         userEffectPasses: this.userEffectPasses,
-        glslEffects: glsl,
+        glslEffects,
       })
 
       CoolRetroHyper.xTermConnector.connect(
