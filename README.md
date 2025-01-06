@@ -54,7 +54,7 @@ module.exports = {
     ...
     coolRetroHyper: {
       crt: {
-        bloom: 3, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 5
+        bloom: 2, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 5
         burnInTime: 0.4,
         jitter: 0.8,
         screenCurvature: 0.1,
