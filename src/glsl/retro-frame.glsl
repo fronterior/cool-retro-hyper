@@ -50,8 +50,8 @@ vec2 borderReflect(vec2 p)
 	return p + d*normal;
 }
 
-void mainImage(const in vec4 inputColor, const in vec2 fragCoord, out vec4 fragColor) {
-	vec2 coords = distortCoordinates(fragCoord);
+void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
+	vec2 coords = distortCoordinates(uv);
 	vec3 color = texture(inputBuffer, coords).rgb;	// fragColor = vec4(color, 1.0);
 
 	float alpha = 0.0;
