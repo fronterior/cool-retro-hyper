@@ -174,11 +174,11 @@ export async function createCRTEffect(
   return {
     passes: [
       new EffectPass(undefined, ...scaleEffects),
+      new EffectPass(undefined, bloomEffect),
       ...(burnInEffect ? [new EffectPass(undefined, burnInEffect)] : []),
       ...userEffectPasses,
       new EffectPass(undefined, retroEffect),
       savePass,
-      new EffectPass(undefined, bloomEffect),
       ...(screenCurvature ? [new EffectPass(undefined, frameEffect)] : []),
     ],
     coordinateTransform(x: number, y: number) {
