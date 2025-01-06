@@ -5,8 +5,8 @@ export type CoolRetroHyperConfiguration = {
   fps?: number
   shaderPaths?: string[]
   crt?: {
+    bloom?: number
     burnInTime?: number
-    boom?: number
     jitter?: number
     screenCurvature?: number
     noise?: number

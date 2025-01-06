@@ -10,8 +10,8 @@ import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 const userShaderCache: Record<string, Promise<string>> = {}
 
 const defaultCRTOptions = {
+  bloom: 2, // 0 ~ 5
   burnInTime: 0.4,
-  boom: 3, // 0 ~ 5
   jitter: 0.8,
   screenCurvature: 0.1,
   noise: 0.4,
@@ -37,7 +37,7 @@ export async function createCRTEffect(
   const savePass = new CopyPass(saveTarget)
 
   const burnInTime = options.crt?.burnInTime ?? defaultCRTOptions.burnInTime
-  const boom = options.crt?.boom ?? defaultCRTOptions.boom
+  const bloom = options.crt?.bloom ?? defaultCRTOptions.bloom
   const jitter = options.crt?.jitter ?? defaultCRTOptions.jitter
   const screenCurvature =
     options.crt?.screenCurvature ?? defaultCRTOptions.screenCurvature
@@ -102,7 +102,7 @@ export async function createCRTEffect(
   })
 
   const bloomEffect = new BloomEffect({
-    kernelSize: boom,
+    kernelSize: bloom,
     blendFunction: BlendFunction.LIGHTEN,
   })
 
