@@ -19,10 +19,34 @@
     <link rel="icon" type="image/png" href="./favicon.png" />
     <link href="./style.css" rel="stylesheet" />
   </head>
-  <body>
+  <body style="background-color: black">
     <h1>Cool Retro Hyper</h1>
     <div id="terminal"></div>
     <div id="hyper"></div>
+    <div id="error">
+      <img
+        src="https://private-user-images.githubusercontent.com/77128036/398232430-dff75bc7-1457-47e4-82d7-865549c910a4.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzYyNjM4NzYsIm5iZiI6MTczNjI2MzU3NiwicGF0aCI6Ii83NzEyODAzNi8zOTgyMzI0MzAtZGZmNzViYzctMTQ1Ny00N2U0LTgyZDctODY1NTQ5YzkxMGE0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTA3VDE1MjYxNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWYwMDdjYmRjNzIyZTI3YWM0OTc4ZWQ5ZjFiYWEyOTI1ODEyZDFkN2ZiNGI4YTYxZmIwYjZkMWNjNDVlOWU1OGEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.fzRGOPDr4nzj_U0cpldXeFCEjjKEWgI9piGbXU9VUQM"
+      />
+      <p>
+        <a href="https://github.com/fronterior/cool-retro-hyper" target="_blank"
+          >Cool Retro Hyper (https://github.com/fronterior/cool-retro-hyper)</a
+        >
+      </p>
+      <p id="errorMessage">Error</p>
+      <noscript>
+        <p>JavaScript is required to run this web site.</p>
+        <style>
+          #error {
+            display: flex !important;
+          }
+        </style>
+      </noscript>
+    </div>
     <script type="module" src="./docs.mjs"></script>
+    <script nomodule>
+      document.getElementById('error').style.display = 'flex'
+      document.getElementById('errorMessage').innerText =
+        'Please check on the latest browsers that support ESM (ECMAScript Modules).'
+    </script>
   </body>
 </html>
