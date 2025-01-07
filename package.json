@@ -7,6 +7,7 @@
     "build": "tsup src/index.ts --format cjs",
     "dev": "pnpm run build --watch",
     "build:prod": "tsup src/index.ts --format cjs --minify",
+    "build:docs": "tsup src/docs.ts --format esm --watch --out-dir ./docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
