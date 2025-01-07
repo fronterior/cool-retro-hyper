@@ -1,0 +1,34 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  background: black;
+}
+
+h1 {
+  display: none;
+}
+
+#terminal {
+  width: 100%;
+  height: 100%;
+}
+
+#hyper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#hyper canvas {
+  width: 100%;
+  height: 100%;
+}
