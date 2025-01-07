@@ -30,22 +30,22 @@ const hostname = 'cool-retro-hyper'
 const hyperPromptText = `\x1B[1;3;31m${hostname}\x1B[0m $ `
 
 const HyperASCIIArt = `
-   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒      Welcome to Cool Retro Hyper Example  
+   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒      \x1B[38;2;0;255;0mWelcome to Cool Retro Hyper Example\x1B[0m
  ▒▒▒▓██████████████████████▓▒▒▒    ------------------------------------
-▒▒▒██████▒███████████████████▒▒▒   Version: ${version}
-▒▒█████▒░░████████████████████▒▒   Repositiry: https://github.com/fronterior/cool-retro-hyper 
+▒▒▒██████▒███████████████████▒▒▒   \x1B[1;33mVersion\x1B[0m: ${version}
+▒▒█████▒░░████████████████████▒▒   \x1B[1;33mRepositiry\x1B[0m: \x1B[38;2;0;255;255mhttps://github.com/fronterior/cool-retro-hyper\x1B[0m 
 ▒▒███▒░░░█████████████████████▒▒   
-▒▒█████▒░░▒███████████████████▒▒   Usage: crh [command] 
+▒▒█████▒░░▒███████████████████▒▒   \x1B[1;33mUsage\x1B[0m: crh [command] 
 ▒▒█████░░█████████████████████▒▒     -h, --help                   Show this message  
 ▒▒████▒░█████░░░░░████████████▒▒     -c, --config                 Get all configuration
 ▒▒████████████████████████████▒▒     -c, --config <key>           Get configuration
 ▒▒████████████████████████████▒▒     -c, --config <key> <value>   Set configuration
 ▒▒████████████████████████████▒▒     -r, --reset                  Reset configuration
 ▒▒████████████████████████████▒▒   
-▒▒████████████████████████████▒▒   Examples:
+▒▒████████████████████████████▒▒   \x1B[1;33mExamples\x1B[0m:
 ▒▒▒██████████████████████████▒▒▒     crh --config crt.screenCurvature 0.2
- ▒▒▒▓██████████████████████▓▒▒▒      crh -r
-   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+ ▒▒▒▓██████████████████████▓▒▒▒      crh -c shaderPaths <SHADER_TEXT_URL>
+   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        crh -r
 `
   .split('\n')
   .join('\n\r')
