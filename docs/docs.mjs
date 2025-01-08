@@ -475,42 +475,121 @@ var noiseTexture = await new Promise((res) => {
     res(texture);
   });
 });
+var configuration = {
+  crt: {
+    screenCurvature: 0.3
+  },
+  shaderPaths: []
+};
 var term = new Terminal();
 var webglAddon = new WebglAddon();
 var fitAddon = new FitAddon();
 var webLinksAddon = new WebLinksAddon();
 var hostname = "cool-retro-hyper";
-var hyperPromptText = `\x1B[1;3;31m${hostname}\x1B[0m $ `;
-var HyperASCIIArt = `
-   \u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592      \x1B[38;2;0;255;0mWelcome to Cool Retro Hyper Example\x1B[0m
- \u2592\u2592\u2592\u2593\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2593\u2592\u2592\u2592    ------------------------------------
-\u2592\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592\u2592   \x1B[1;33mVersion\x1B[0m: ${version}
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2592\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592   \x1B[1;33mRepositiry\x1B[0m: \x1B[38;2;0;255;255mhttps://github.com/fronterior/cool-retro-hyper\x1B[0m 
-\u2592\u2592\u2588\u2588\u2588\u2592\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592   
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2592\u2591\u2591\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592   \x1B[1;33mUsage\x1B[0m: crh [command] 
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592     -h, --help                   Show this message  
-\u2592\u2592\u2588\u2588\u2588\u2588\u2592\u2591\u2588\u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592     -c, --config                 Get all configuration
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592     -c, --config <key>           Get configuration
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592     -c, --config <key> <value>   Set configuration
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592     -r, --reset                  Reset configuration
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592   
-\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592   \x1B[1;33mExamples\x1B[0m:
-\u2592\u2592\u2592\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2592\u2592\u2592     crh --config crt.screenCurvature 0.2
- \u2592\u2592\u2592\u2593\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2593\u2592\u2592\u2592      crh -c shaderPaths <SHADER_TEXT_URL>
-   \u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592        crh -r
-`.split("\n").join("\n\r");
+var hyperPromptText = `\x1B[1;38;2;255;255;255m${hostname}\x1B[0m \x1B[1;33m$\x1B[0m `;
+var HyperASCIILogo = `
+   \u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592  
+ \u2592\u2592\u2592\u2591                      \u2591\u2592\u2592\u2592
+\u2592\u2592\u2592      \x1B[38;2;255;255;184m\u2593\x1B[0m                   \u2592\u2592\u2592
+\u2592\u2592     \x1B[38;2;255;255;184m\u2592\u2588\u2591\x1B[0m                    \u2592\u2592
+\u2592\u2592   \x1B[38;2;255;255;184m\u2592\u2588\u2588\u2588\x1B[0m                     \u2592\u2592
+\u2592\u2592     \x1B[38;2;255;255;184m\u2592\u2588\u2588\u2592\x1B[0m                   \u2592\u2592
+\u2592\u2592     \x1B[38;2;255;255;184m\u2588\u2588\x1B[0m                     \u2592\u2592
+\u2592\u2592    \x1B[38;2;255;255;184m\u2592\u2588     \u2588\u2588\u2588\u2588\u2588\x1B[0m            \u2592\u2592
+\u2592\u2592                            \u2592\u2592
+\u2592\u2592                            \u2592\u2592
+\u2592\u2592                            \u2592\u2592
+\u2592\u2592                            \u2592\u2592
+\u2592\u2592                            \u2592\u2592
+\u2592\u2592\u2592                          \u2592\u2592\u2592
+ \u2592\u2592\u2592\u2591                      \u2591\u2592\u2592\u2592
+   \u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592\u2592
+`.split("\n");
+var HyperInfo = `
+\x1B[1;38;2;0;255;0mWelcome to Cool Retro Hyper Example\x1B[0m
+------------------------------------
+\x1B[1;33mVersion\x1B[0m: ${version}
+\x1B[1;33mRepositiry\x1B[0m: \x1B[38;2;0;255;255mhttps://github.com/fronterior/cool-retro-hyper\x1B[0m 
+
+\x1B[1;33mUsage\x1B[0m: crh [command]
+  -h, --help                   Show this message
+  -c, --config                 Get all configuration
+  -c, --config <key>           Get configuration
+  -c, --config <key> <value>   Set configuration
+  -r, --reset                  Reset configuration
+
+\x1B[1;33mExamples\x1B[0m:
+  crh --config crt.screenCurvature 0.2
+  crh -c shaderPaths <SHADER_TEXT_URL>
+  crh -r
+`.split("\n");
 term.open(document.getElementById("terminal"));
 term.loadAddon(webglAddon);
 term.loadAddon(fitAddon);
 term.loadAddon(webLinksAddon);
-term.write(HyperASCIIArt);
-term.write("\n\r");
+function getRawText(text) {
+  return text.replaceAll(/\x1B.*?m/g, "");
+}
+function crhFetch() {
+  const paddingLeft = 3;
+  const lineWidth = 35;
+  const maxLineWidth = paddingLeft + lineWidth + Math.max(...HyperInfo.map((line) => getRawText(line).length));
+  if (term.cols > maxLineWidth) {
+    const maxLineHeight = Math.max(HyperASCIILogo.length, HyperInfo.length);
+    for (let i = 0; i < maxLineHeight; i++) {
+      const logoLine = HyperASCIILogo[i];
+      const textWidth = logoLine.replaceAll(/\x1B.*?m/g, "").length;
+      const line = " ".repeat(paddingLeft) + logoLine.padEnd(lineWidth + logoLine.length - textWidth, " ") + HyperInfo[i];
+      term.write(`${line}
+\r`);
+    }
+  } else {
+    const logoPaddingLeft = Math.floor((term.cols - 32) / 2);
+    for (const line of 32 > term.cols ? [] : HyperASCIILogo) {
+      term.write(`${" ".repeat(logoPaddingLeft)}${line}
+\r`);
+    }
+    for (const line of HyperInfo) {
+      term.write(`${line}
+\r`);
+    }
+  }
+}
 function prompt() {
   term.write(hyperPromptText);
 }
-prompt();
 function run(cmd) {
-  console.log(cmd);
+  if (cmd.length === 0) {
+    return;
+  }
+  const [name, flag, ...args] = cmd.split(" ");
+  if (name !== "crh") {
+    term.write(`
+\rcommand not found: ${name}`);
+    return;
+  }
+  if (flag === "-c" || flag === "--config") {
+    const [key, ...values] = args;
+    let targetObject = configuration;
+    key?.split(".").forEach((field, i, { length }) => {
+      if (i + 1 === length) {
+        const value = +values[0];
+        if (!Number.isNaN(value)) {
+          targetObject[field] = value;
+        }
+        return;
+      }
+      targetObject = targetObject[field];
+    });
+    console.log(configuration);
+    const crtEffect2 = createCRTEffect({
+      options: configuration,
+      noiseTexture,
+      glslEffects: glsl_exports,
+      userEffectPasses: []
+    });
+    xTermConnector.connect(term, crtEffect2, connectOptions);
+  }
   term.write("\n\r \u26A0\uFE0F Working in progress \u26A0\uFE0F");
 }
 var inputHistory = [];
@@ -566,23 +645,34 @@ term.onKey(({ key, domEvent }) => {
       cursor += 1;
   }
 });
-window.addEventListener("resize", () => {
-  fitAddon.fit();
-});
+function debounce(cb, delay) {
+  let timer = -1;
+  return () => {
+    clearTimeout(timer);
+    timer = setTimeout(cb, delay);
+  };
+}
+window.addEventListener(
+  "resize",
+  debounce(() => {
+    fitAddon.fit();
+    term.reset();
+    crhFetch();
+    prompt();
+  }, 32)
+);
 fitAddon.fit();
+crhFetch();
+prompt();
 var crtEffect = createCRTEffect({
-  options: {
-    crt: {
-      screenCurvature: 0.2
-    }
-  },
+  options: configuration,
   noiseTexture,
   glslEffects: glsl_exports,
   userEffectPasses: []
 });
 var connectOptions = {
   fps: 60,
-  shaderPaths: []
+  shaderPaths: configuration.shaderPaths
 };
 var xTermConnector = new XTermConnector();
 xTermConnector.connect(term, crtEffect, connectOptions);

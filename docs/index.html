@@ -42,6 +42,13 @@
         </style>
       </noscript>
     </div>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/plugin-transform-typescript"></script>
+    <script
+      type="text/babel"
+      data-presets="typescript"
+      src="./test.ts"
+    ></script>
     <script type="module" src="./docs.mjs"></script>
     <script nomodule>
       document.getElementById('error').style.display = 'flex'
