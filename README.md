@@ -36,6 +36,8 @@ module.exports = {
 }
 ```
 
+⚡️ Sadly, I'm not sure if the development of Hyper Terminal is still ongoing, but [Hyper 4.0.0-canary.5](https://github.com/vercel/hyper/releases/tag/v4.0.0-canary.5) is quite usable. Compared to the current stable version 3.4.1, it has significantly improved rendering performance, and I haven't noticed any issues with parts of the screen being cut off. If you plan to use this plugin, I strongly recommend using version 4.0.0-canary.5.
+
 ## ⚠️ Cautions
 
 - This app does not support split screen and tabbing in Hyper Terminal. If you need these features, please use a multiplexer like [tmux](https://github.com/tmux/tmux) or [zellij](https://github.com/zellij-org/zellij).
