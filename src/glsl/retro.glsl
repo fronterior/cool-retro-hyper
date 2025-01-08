@@ -89,15 +89,16 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 	float color = 0.0001;
 
 	// static noise
-	float distance = length(vec2(0.5) - uv);
+	if (staticNoise > 0.0) { 
+		float distance = length(vec2(0.5) - uv);
 
-  vec2 scaledUv = uv * 10.0;
-  
-  float noiseValue = noise(scaledUv + noise(scaledUv.yx));
+  	vec2 scaledUv = uv * 10.0;
+  	
+  	float noiseValue = noise(scaledUv + noise(scaledUv.yx));
 
-  noiseValue += distortionScale * 3.0;
-  color += staticNoise * noiseValue * (1.0 - distance * 1.3);
-
+  	noiseValue += distortionScale * 3.0;
+  	color += staticNoise * noiseValue * (1.0 - distance * 1.3);
+  }
 
 	// glowingLine
 	color += randomPass(uv * resolution) * glowingLine * 0.2;

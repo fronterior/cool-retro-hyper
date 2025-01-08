@@ -80,6 +80,8 @@ module.exports = {
 }
 ```
 
+If WebGL is not executed using OffscreenCanvas, rendering will be handled on the main thread, which can block the event loop and affect overall performance. When necessary, you can minimize computation costs by assigning a value of 0 to specific properties.
+
 ### shaderPaths
 
 You can input a GLSL file to use as the background. You can provide the input either relative to the home directory or as an absolute path, as shown below.
