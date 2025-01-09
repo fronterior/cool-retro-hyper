@@ -35,7 +35,7 @@ export function decorateHyper(
 
     static xTermConnector = new XTermConnector()
     static noiseTexturePromise = noiseTexturePromise
-    static userEffectPassesPromise: Promise<EffectPass[]>
+    static userEffectPassesPromise: Promise<EffectPass[]> | null
 
     private hyper: HyperComponent
 
@@ -49,12 +49,11 @@ export function decorateHyper(
       CoolRetroHyper.noiseTexturePromise.then(
         (texture) => (this.noiseTexture = texture),
       )
-      CoolRetroHyper.userEffectPassesPromise = (
+      CoolRetroHyper.userEffectPassesPromise =
         CoolRetroHyper.userEffectPassesPromise ??
         loadUserShaders(
           window.config.getConfig()?.coolRetroHyper?.shaderPaths ?? [],
         )
-      ).then((userEffectPasses) => (this.userEffectPasses = userEffectPasses))
     }
 
     onDecorated(terms: HyperComponent) {
@@ -63,17 +62,28 @@ export function decorateHyper(
     }
 
     componentDidUpdate() {
+      console.log(window.config.getConfig()?.coolRetroHyper?.shaderPaths)
+        ; ('')
       Promise.resolve()
         .then(() =>
           Promise.all([
             CoolRetroHyper.noiseTexturePromise,
-            CoolRetroHyper.userEffectPassesPromise,
+            (
+              CoolRetroHyper.userEffectPassesPromise ??
+              loadUserShaders(
+                window.config.getConfig()?.coolRetroHyper?.shaderPaths ?? [],
+              )
+            ).then(
+              (userEffectPasses) => (this.userEffectPasses = userEffectPasses),
+            ),
           ]),
         )
         .then(() => this.updateXTerms())
+        .finally(() => (CoolRetroHyper.userEffectPassesPromise = null))
     }
 
     updateXTerms() {
+      console.log(this.userEffectPasses)
       const state = window.store.getState()
       const activeRootId = state.termGroups.activeRootGroup
       if (!activeRootId) return
