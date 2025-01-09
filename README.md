@@ -80,7 +80,8 @@ module.exports = {
 }
 ```
 
-If WebGL is not executed using OffscreenCanvas, rendering will be handled on the main thread, which can block the event loop and affect overall performance. When necessary, you can minimize computation costs by assigning a value of 0 to specific properties.
+- Note: In Hyper version 4.0.0, the location of the configuration file is different. On macOS, it is located at `~/.config/Hyper/hyper.json`
+- Note: If WebGL is not executed using OffscreenCanvas, rendering will be handled on the main thread, which can block the event loop and affect overall performance. When necessary, you can minimize computation costs by assigning a value of 0 to specific properties.
 
 ### shaderPaths
 
