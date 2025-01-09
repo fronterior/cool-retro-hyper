@@ -78,19 +78,21 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 
 	float dst = sin((coords.y + time) * distortionFreq);
 	coords.x += dst * distortionScale;
-
-	vec4 noiseTexel = texture2D(noiseSource, resolution / (vec2(512, 512) * 0.75) * coords + vec2(fract(time * 1000.0 / 51.0), fract(time * 1000.0 / 237.0)));
-
-	// jitter
-	vec2 offset = vec2(noiseTexel.b, noiseTexel.a) - vec2(0.5);
-	coords += offset * jitter;
-	coords = clamp(coords, 0.0, 1.0);
   
+	// jitter
+  if (jitter.x + jitter.y > 0.0) {
+		vec4 noiseTexel = texture2D(noiseSource, resolution / (vec2(512, 512) * 0.75) * coords + vec2(fract(time * 1000.0 / 51.0), fract(time * 1000.0 / 237.0)));
+
+		vec2 offset = vec2(noiseTexel.b, noiseTexel.a) - vec2(0.5);
+		coords += offset * jitter;
+		coords = clamp(coords, 0.0, 1.0);
+  }
 	float color = 0.0001;
 
 	// static noise
+	float distance = length(vec2(0.5) - uv);
+	
 	if (staticNoise > 0.0) { 
-		float distance = length(vec2(0.5) - uv);
 
   	vec2 scaledUv = uv * 10.0;
   	
