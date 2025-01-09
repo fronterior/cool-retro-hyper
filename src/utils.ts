@@ -56,7 +56,11 @@ export async function loadUserShaders(shaderPaths: string[]) {
 
       return promise
     }),
-  )
+  ).catch((error) => {
+    console.error(error)
+
+    return []
+  })
 
   const userEffectPasses = userShaders.map(
     ({ filePath, code }) =>
