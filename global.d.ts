@@ -28,9 +28,9 @@ declare module 'postprocessing' {
   }
 }
 
+// not working... why?
 declare module '*.glsl' {
   const value: string
   export default value
 }
-
-export {}
+export { }
