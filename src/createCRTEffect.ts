@@ -4,7 +4,7 @@ import { EffectPass } from 'postprocessing'
 import type * as glsl from './glsl'
 import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 
-const defaultCRTOptions = {
+export const defaultCRTOptions = {
   bloom: 2, // 0 ~ 5
   burnInTime: 0.4,
   jitter: 0.8,
