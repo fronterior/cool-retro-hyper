@@ -136,7 +136,7 @@ function run(cmd: string) {
     let targetObject = configuration
     key?.split('.').forEach((field, i, { length }) => {
       if (i + 1 === length) {
-        const value = +values[0]
+        const value = Number(values[0])
         if (!Number.isNaN(value)) {
           targetObject[field] = value
         }
@@ -147,19 +147,18 @@ function run(cmd: string) {
       targetObject = targetObject[field]
     })
 
-    console.log(configuration)
-
-    const crtEffect = createCRTEffect({
-      options: configuration,
+    options: configuration,
       noiseTexture,
       glslEffects,
       userEffectPasses: [],
     })
 
-    xTermConnector.connect(term, crtEffect, connectOptions)
-  }
+  xTermConnector.connect(term, crtEffect, connectOptions)
 
-  term.write('\n\r ⚠️ Working in progress ⚠️')
+  return
+}
+
+term.write('\n\r ⚠️ Working in progress ⚠️')
 }
 
 const inputHistory = []
