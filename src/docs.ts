@@ -147,18 +147,19 @@ function run(cmd: string) {
       targetObject = targetObject[field]
     })
 
-    options: configuration,
+    const crtEffect = createCRTEffect({
+      options: configuration,
       noiseTexture,
       glslEffects,
       userEffectPasses: [],
     })
 
-  xTermConnector.connect(term, crtEffect, connectOptions)
+    xTermConnector.connect(term, crtEffect, connectOptions)
 
-  return
-}
+    return
+  }
 
-term.write('\n\r ⚠️ Working in progress ⚠️')
+  term.write('\n\r ⚠️ Working in progress ⚠️')
 }
 
 const inputHistory = []
