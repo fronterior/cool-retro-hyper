@@ -2,14 +2,17 @@ import { Terminal } from 'https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/+esm'
 import { WebglAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-webgl@0.18.0/+esm'
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/+esm'
 import { WebLinksAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/+esm'
-import { createCRTEffect } from './createCRTEffect'
-import * as glslEffects from './glsl'
+import { createCRTEffect } from '../createCRTEffect'
+import * as glslEffects from '../glsl'
 import * as THREE from 'three'
-import { XTermConnector } from './XTermConnector'
-import packageJSON from '../package.json'
-import { CoolRetroHyperConfiguration } from './types'
+import { XTermConnector } from '../XTermConnector'
+import { commands } from './commands'
+import packageJSON from '../../package.json'
+import type { CoolRetroHyperConfiguration } from '../types'
 
 const version = packageJSON.version
+console.log('version', version)
+console.log('commands', commands)
 
 const noiseTexture = await new Promise<THREE.Texture>((res) => {
   new THREE.TextureLoader().load('./allNoise512.png', (texture) => {
@@ -62,17 +65,21 @@ const HyperInfo = `
 \x1B[1;33mVersion\x1B[0m: ${version}
 \x1B[1;33mRepositiry\x1B[0m: \x1B[38;2;0;255;255mhttps://github.com/fronterior/cool-retro-hyper\x1B[0m 
 
-\x1B[1;33mUsage\x1B[0m: crh [command]
-  -h, --help                   Show this message
-  -c, --config                 Get all configuration
-  -c, --config <key>           Get configuration
-  -c, --config <key> <value>   Set configuration
-  -r, --reset                  Reset configuration
+\x1B[1;33mUsage\x1B[0m: crt [command]
+  -s <option> <value>         Set configuration
+  -g <option>                 Get configuration
+  -ga                         Get all configuration
+  -r                          Reset configuration
+
+\x1B[1;33mUsage\x1B[0m: shaderPaths [command]
+  -a <path>                   Add shader GLSL URL
+  -d <path>                   Delete shader GLSL URL
+  -l                          List shader GLSL URLs
+  -r                          Reset configuration
 
 \x1B[1;33mExamples\x1B[0m:
-  crh --config crt.screenCurvature 0.2
-  crh -c shaderPaths <SHADER_TEXT_URL>
-  crh -r
+  crt -s screenCurvature 0.2
+  shaderPaths add <SHADER_TEXT_URL>
 `.split('\n')
 
 term.open(document.getElementById('terminal')!)
@@ -96,7 +103,7 @@ function crhFetch() {
   if (term.cols > maxLineWidth) {
     const maxLineHeight = Math.max(HyperASCIILogo.length, HyperInfo.length)
     for (let i = 0; i < maxLineHeight; i++) {
-      const logoLine = HyperASCIILogo[i]
+      const logoLine = HyperASCIILogo[i] ?? ''
       const textWidth = logoLine.replaceAll(/\x1B.*?m/g, '').length
       const line =
         ' '.repeat(paddingLeft) +
@@ -120,12 +127,16 @@ function prompt() {
 }
 
 function run(cmd: string) {
+  const commands = {
+    crt: {},
+    shaderPaths: {},
+  }
   if (cmd.length === 0) {
     return
   }
   const [name, flag, ...args] = cmd.split(' ')
 
-  if (name !== 'crh') {
+  if (!(name! in commands)) {
     term.write(`\n\rcommand not found: ${name}`)
     return
   }
