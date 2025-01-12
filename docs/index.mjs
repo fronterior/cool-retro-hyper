@@ -444,7 +444,7 @@ var config = {
       );
     },
     getList() {
-      return configuration.shaderPaths;
+      return configuration.shaderPaths.join("\n");
     },
     reset() {
       configuration.shaderPaths = [];
@@ -560,6 +560,7 @@ var package_default = {
 };
 
 // src/docs/index.ts
+import { Effect as Effect2, EffectPass as EffectPass3, BlendFunction as BlendFunction2 } from "postprocessing";
 var version = package_default.version;
 var noiseTexture = await new Promise((res) => {
   new THREE2.TextureLoader().load("./allNoise512.png", (texture) => {
@@ -570,6 +571,9 @@ var noiseTexture = await new Promise((res) => {
   });
 });
 config.crt.set("screenCurvature", 0.3);
+config.shaderPaths.add(
+  "https://raw.githubusercontent.com/fronterior/cool-retro-hyper/refs/heads/main/examples/neonwave-sunrise.glsl"
+);
 var configuration2 = config.getConfig();
 var term = new Terminal();
 var webglAddon = new WebglAddon();
@@ -660,17 +664,23 @@ function run(cmd) {
   const [name, flag, ...values] = stringArgv(cmd);
   if (!(name in commands)) {
     term.write(`
-\rcommand not found: ${name}`);
+\rcrh: command not found: ${name}`);
     return;
   }
   const flags = commands[name];
   if (!(flag in flags)) {
     term.write(`
-\rflag not found: ${flag}`);
+\r${name}: flag not found: ${flag}`);
     return;
   }
   const func = flags[flag];
-  const output = func(...values);
+  const output = (() => {
+    try {
+      return func(...values);
+    } catch (error) {
+      return error.message;
+    }
+  })();
   if (output) {
     for (const line of output.split("\n")) {
       term.write(`
@@ -679,13 +689,17 @@ function run(cmd) {
     return;
   }
   const configuration3 = config.getConfig();
-  const crtEffect2 = createCRTEffect({
-    options: configuration3,
-    noiseTexture,
-    glslEffects: glsl_exports,
-    userEffectPasses: []
+  Promise.allSettled(
+    config.getConfig().shaderPaths.map((url) => fetchUserShader(url))
+  ).then((userEffectPasses) => {
+    const crtEffect2 = createCRTEffect({
+      options: configuration3,
+      noiseTexture,
+      glslEffects: glsl_exports,
+      userEffectPasses: userEffectPasses.filter(({ status }) => status === "fulfilled").map(({ value }) => value)
+    });
+    xTermConnector.connect(term, crtEffect2, connectOptions);
   });
-  xTermConnector.connect(term, crtEffect2, connectOptions);
 }
 var inputHistory = [];
 var historyCursor = 0;
@@ -790,6 +804,24 @@ window.addEventListener(
 fitAddon.fit();
 crhFetch();
 prompt();
+function transformShaderToy(glsl) {
+  return glsl.replaceAll("iTime", "time").replaceAll("iResolution", "resolution").replace("mainImage", "coolRetroHyperShadertoyMainImage") + `
+void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`;
+}
+function fetchUserShader(url) {
+  return fetch(url).then((res) => res.text()).then((value) => {
+    let code = value.toString().replaceAll(/^.*#define PI .*$/gm, "");
+    if (code.includes("@shadertoy")) {
+      code = transformShaderToy(code);
+    }
+    return new EffectPass3(
+      void 0,
+      new Effect2(url, code, {
+        blendFunction: BlendFunction2.SCREEN
+      })
+    );
+  });
+}
 var crtEffect = createCRTEffect({
   options: configuration2,
   noiseTexture,
@@ -802,3 +834,14 @@ var connectOptions = {
 };
 var xTermConnector = new XTermConnector();
 xTermConnector.connect(term, crtEffect, connectOptions);
+Promise.allSettled(
+  config.getConfig().shaderPaths.map((url) => fetchUserShader(url))
+).then((userEffectPasses) => {
+  const crtEffect2 = createCRTEffect({
+    options: configuration2,
+    noiseTexture,
+    glslEffects: glsl_exports,
+    userEffectPasses: userEffectPasses.filter(({ status }) => status === "fulfilled").map(({ value }) => value)
+  });
+  xTermConnector.connect(term, crtEffect2, connectOptions);
+});

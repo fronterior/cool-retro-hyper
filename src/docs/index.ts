@@ -11,6 +11,7 @@ import { commands } from './commands'
 import packageJSON from '../../package.json'
 import type { CoolRetroHyperConfiguration } from '../types'
 import { config } from './config'
+import { Effect, EffectPass, BlendFunction } from 'postprocessing'
 
 const version = packageJSON.version
 
@@ -25,6 +26,9 @@ const noiseTexture = await new Promise<THREE.Texture>((res) => {
 })
 
 config.crt.set('screenCurvature', 0.3)
+config.shaderPaths.add(
+  'https://raw.githubusercontent.com/fronterior/cool-retro-hyper/refs/heads/main/examples/neonwave-sunrise.glsl',
+)
 const configuration: CoolRetroHyperConfiguration = config.getConfig()
 
 const term = new Terminal()
@@ -129,19 +133,25 @@ function run(cmd: string) {
   }
   const [name, flag, ...values] = stringArgv(cmd)
   if (!(name! in commands)) {
-    term.write(`\n\rcommand not found: ${name}`)
+    term.write(`\n\rcrh: command not found: ${name}`)
     return
   }
 
   const flags = commands[name as keyof typeof commands]
   if (!(flag in flags)) {
-    term.write(`\n\rflag not found: ${flag}`)
+    term.write(`\n\r${name}: flag not found: ${flag}`)
     return
   }
 
   const func = flags[flag as keyof typeof flags]
 
-  const output = func(...values)
+  const output = (() => {
+    try {
+      return func(...values)
+    } catch (error: Error) {
+      return error.message
+    }
+  })()
 
   if (output) {
     for (const line of output.split('\n')) {
@@ -153,14 +163,19 @@ function run(cmd: string) {
 
   const configuration = config.getConfig()
 
-  const crtEffect = createCRTEffect({
-    options: configuration,
-    noiseTexture,
-    glslEffects,
-    userEffectPasses: [],
+  Promise.allSettled(
+    config.getConfig().shaderPaths.map((url) => fetchUserShader(url)),
+  ).then((userEffectPasses) => {
+    const crtEffect = createCRTEffect({
+      options: configuration,
+      noiseTexture,
+      glslEffects,
+      userEffectPasses: userEffectPasses
+        .filter(({ status }) => status === 'fulfilled')
+        .map(({ value }) => value),
+    })
+    xTermConnector.connect(term, crtEffect, connectOptions)
   })
-
-  xTermConnector.connect(term, crtEffect, connectOptions)
 }
 
 const inputHistory: string[] = []
@@ -284,6 +299,35 @@ fitAddon.fit()
 crhFetch()
 prompt()
 
+function transformShaderToy(glsl: string) {
+  return (
+    glsl
+      .replaceAll('iTime', 'time')
+      .replaceAll('iResolution', 'resolution')
+      .replace('mainImage', 'coolRetroHyperShadertoyMainImage') +
+    `\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`
+  )
+}
+
+function fetchUserShader(url: string) {
+  return fetch(url)
+    .then((res) => res.text())
+    .then((value) => {
+      let code = value.toString().replaceAll(/^.*#define PI .*$/gm, '')
+
+      if (code.includes('@shadertoy')) {
+        code = transformShaderToy(code)
+      }
+
+      return new EffectPass(
+        undefined,
+        new Effect(url, code, {
+          blendFunction: BlendFunction.SCREEN,
+        }),
+      )
+    })
+}
+
 const crtEffect = createCRTEffect({
   options: configuration,
   noiseTexture,
@@ -298,3 +342,17 @@ const connectOptions = {
 
 const xTermConnector = new XTermConnector()
 xTermConnector.connect(term, crtEffect, connectOptions)
+
+Promise.allSettled(
+  config.getConfig().shaderPaths.map((url) => fetchUserShader(url)),
+).then((userEffectPasses) => {
+  const crtEffect = createCRTEffect({
+    options: configuration,
+    noiseTexture,
+    glslEffects,
+    userEffectPasses: userEffectPasses
+      .filter(({ status }) => status === 'fulfilled')
+      .map(({ value }) => value),
+  })
+  xTermConnector.connect(term, crtEffect, connectOptions)
+})

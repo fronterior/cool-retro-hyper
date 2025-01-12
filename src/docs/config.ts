@@ -40,7 +40,7 @@ export const config = {
       )
     },
     getList() {
-      return configuration.shaderPaths
+      return configuration.shaderPaths.join('\n')
     },
     reset() {
       configuration.shaderPaths = []
