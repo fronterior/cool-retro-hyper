@@ -14,7 +14,7 @@ export type CoolRetroHyperConfiguration = {
     flickering?: number
     ambientLight?: number
     pixelHeight?: number
-    pixelization?: number
+    pixelization?: boolean
     rgbSplit?: number
     rgbSplitXDistance?: number
     rgbSplitYDistance?: number
