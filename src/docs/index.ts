@@ -2,6 +2,7 @@ import { Terminal } from 'https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/+esm'
 import { WebglAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-webgl@0.18.0/+esm'
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/+esm'
 import { WebLinksAddon } from 'https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/+esm'
+import stringArgv from 'https://cdn.jsdelivr.net/npm/string-argv@0.3.2/+esm'
 import { createCRTEffect } from '../createCRTEffect'
 import * as glslEffects from '../glsl'
 import * as THREE from 'three'
@@ -9,10 +10,9 @@ import { XTermConnector } from '../XTermConnector'
 import { commands } from './commands'
 import packageJSON from '../../package.json'
 import type { CoolRetroHyperConfiguration } from '../types'
+import { config } from './config'
 
 const version = packageJSON.version
-console.log('version', version)
-console.log('commands', commands)
 
 const noiseTexture = await new Promise<THREE.Texture>((res) => {
   new THREE.TextureLoader().load('./allNoise512.png', (texture) => {
@@ -24,12 +24,8 @@ const noiseTexture = await new Promise<THREE.Texture>((res) => {
   })
 })
 
-const configuration: CoolRetroHyperConfiguration = {
-  crt: {
-    screenCurvature: 0.3,
-  },
-  shaderPaths: [],
-}
+config.crt.set('screenCurvature', 0.3)
+const configuration: CoolRetroHyperConfiguration = config.getConfig()
 
 const term = new Terminal()
 const webglAddon = new WebglAddon()
@@ -39,6 +35,7 @@ const webLinksAddon = new WebLinksAddon()
 const hostname = 'cool-retro-hyper'
 // [~m is zero size...
 const hyperPromptText = `\x1B[1;38;2;255;255;255m${hostname}\x1B[0m \x1B[1;33m$\x1B[0m `
+const hyperPromptTextLength = hyperPromptText.replaceAll(/\x1B.*?m/g, '').length
 
 const HyperASCIILogo = `
    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  
@@ -127,53 +124,47 @@ function prompt() {
 }
 
 function run(cmd: string) {
-  const commands = {
-    crt: {},
-    shaderPaths: {},
-  }
   if (cmd.length === 0) {
     return
   }
-  const [name, flag, ...args] = cmd.split(' ')
-
+  const [name, flag, ...values] = stringArgv(cmd)
   if (!(name! in commands)) {
     term.write(`\n\rcommand not found: ${name}`)
     return
   }
 
-  if (flag === '-c' || flag === '--config') {
-    const [key, ...values] = args
+  const flags = commands[name as keyof typeof commands]
+  if (!(flag in flags)) {
+    term.write(`\n\rflag not found: ${flag}`)
+    return
+  }
 
-    let targetObject = configuration
-    key?.split('.').forEach((field, i, { length }) => {
-      if (i + 1 === length) {
-        const value = Number(values[0])
-        if (!Number.isNaN(value)) {
-          targetObject[field] = value
-        }
+  const func = flags[flag as keyof typeof flags]
 
-        return
-      }
+  const output = func(...values)
 
-      targetObject = targetObject[field]
-    })
-
-    const crtEffect = createCRTEffect({
-      options: configuration,
-      noiseTexture,
-      glslEffects,
-      userEffectPasses: [],
-    })
-
-    xTermConnector.connect(term, crtEffect, connectOptions)
+  if (output) {
+    for (const line of output.split('\n')) {
+      term.write(`\n\r${line.trimRight()}`)
+    }
 
     return
   }
 
-  term.write('\n\r ⚠️ Working in progress ⚠️')
+  const configuration = config.getConfig()
+
+  const crtEffect = createCRTEffect({
+    options: configuration,
+    noiseTexture,
+    glslEffects,
+    userEffectPasses: [],
+  })
+
+  xTermConnector.connect(term, crtEffect, connectOptions)
 }
 
-const inputHistory = []
+const inputHistory: string[] = []
+let historyCursor = 0
 
 let inputText = ''
 let cursor = 0
@@ -185,6 +176,8 @@ term.onKey(({ key, domEvent }: { key: string; domEvent: KeyboardEvent }) => {
     case 13: // Enter
       const cmd = inputText.trim()
       inputHistory.push(cmd)
+      historyCursor = inputHistory.length
+
       run(cmd)
 
       term.write('\n')
@@ -195,7 +188,40 @@ term.onKey(({ key, domEvent }: { key: string; domEvent: KeyboardEvent }) => {
       return
     case 27: // Arrow Keys
       const eventKey = domEvent.key
-      if (eventKey === 'ArrowUp' || eventKey === 'ArrowDown') {
+      if (eventKey === 'ArrowUp') {
+        if (!historyCursor) {
+          return
+        }
+
+        historyCursor -= 1
+        const nextText = inputHistory[historyCursor]!
+        inputText = nextText
+        cursor = nextText.length
+
+        term.write(
+          `\r${hyperPromptText}${nextText}${' '.repeat(term.cols - hyperPromptText.length - nextText.length)}\x1b[${cursorY + 2};${hyperPromptTextLength + cursor + 1}H`,
+        )
+      }
+      if (eventKey === 'ArrowDown') {
+        if (historyCursor >= inputHistory.length - 1) {
+          if (historyCursor < inputHistory.length) {
+            inputText = ''
+            cursor = 0
+            term.write(
+              `\r${hyperPromptText}${' '.repeat(term.cols - hyperPromptText.length)}\x1b[${cursorY + 1};${hyperPromptTextLength + 1}H`,
+            )
+          }
+          return
+        }
+
+        historyCursor += 1
+        const nextText = inputHistory[historyCursor]!
+        inputText = nextText
+        cursor = nextText.length
+
+        term.write(
+          `\r${hyperPromptText}${nextText}${' '.repeat(term.cols - hyperPromptText.length - nextText.length)}\x1b[${cursorY + 1};${hyperPromptTextLength + cursor + 1}H`,
+        )
         return
       }
       if (eventKey === 'ArrowLeft' && !cursor) {
