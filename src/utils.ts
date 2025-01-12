@@ -38,12 +38,7 @@ export async function loadUserShaders(shaderPaths: string[]) {
         let code = value.toString().replaceAll(/^.*#define PI .*$/gm, '')
 
         if (code.includes('@shadertoy')) {
-          code =
-            code
-              .replaceAll('iTime', 'time')
-              .replaceAll('iResolution', 'resolution')
-              .replace('mainImage', 'coolRetroHyperShadertoyMainImage') +
-            `\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`
+          code = transformShaderToy(code)
         }
 
         return {
@@ -69,4 +64,33 @@ export async function loadUserShaders(shaderPaths: string[]) {
   )
 
   return userEffectPasses
+}
+
+export function transformShaderToy(glsl: string) {
+  return (
+    glsl
+      .replaceAll('iTime', 'time')
+      .replaceAll('iResolution', 'resolution')
+      .replace('mainImage', 'coolRetroHyperShadertoyMainImage') +
+    `\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) { vec2 fragCoord = uv * resolution.xy; coolRetroHyperShadertoyMainImage(fragColor, fragCoord); }`
+  )
+}
+
+export function fetchUserShader(url: string) {
+  return fetch(url)
+    .then((res) => res.text())
+    .then((value) => {
+      let code = value.toString().replaceAll(/^.*#define PI .*$/gm, '')
+
+      if (code.includes('@shadertoy')) {
+        code = transformShaderToy(code)
+      }
+
+      return new EffectPass(
+        undefined,
+        new Effect(url, code, {
+          blendFunction: BlendFunction.SCREEN,
+        }),
+      )
+    })
 }
