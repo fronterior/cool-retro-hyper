@@ -1,48 +1,50 @@
-import stringArgv from 'https://cdn.jsdelivr.net/npm/string-argv@0.3.2/+esm'
-import type { CoolRetroHyperConfiguration } from 'src/types'
+import { config } from './config'
 
-type CrtOptions = keyof NonNullable<CoolRetroHyperConfiguration['crt']>
+// mutation, or return string
+export const commands = {
+  crt: {
+    '-s'(option: string, value: string) {
+      if (!config.crt.has(option)) {
+        throw new Error(`Invalid option name: ${option}`)
+      }
 
-const commandString = 'crt -s screenCurvature 0.5'
+      const optionValue = Number(value)
+      if (Number.isNaN(optionValue)) {
+        throw new Error(`Invalid option value: ${value}`)
+      }
 
-export function proceedCommand(
-  commandString: string,
-  configuration: CoolRetroHyperConfiguration,
-) {
-  const argv = stringArgv(commanString)
-
-  const result: Required<CoolRetroHyperConfiguration> = {
-    crt: {},
-    shaderPaths: [],
-    ...configuration,
-  }
-
-  const commans = {
-    crt: {
-      '-s'(option: string, value: string) {
-        const optionValue = Number(value)
-        if (!Number.isNaN(optionValue)) {
-          throw new Error(`Invalid option value: ${value}`)
-        }
-        if (!(option in result.crt)) {
-          throw new Error(`Invalid option name: ${option}`)
-        }
-
-        result.crt[option as CrtOptions] = optionValue
-      },
-      '-g'(option: string) {
-        return result.crt[option as CrtOptions]
-      },
-      '-ga'() {
-        return result
-      },
-      '-r'() {},
+      config.crt.set(option, optionValue)
     },
-    shaderPaths: {
-      '-a'(path: string) {},
-      '-d'(path: string) {},
-      '-l'() {},
-      '-r'() {},
+    '-g'(option: string) {
+      if (!config.crt.has(option)) {
+        throw new Error(`Invalid option name: ${option}`)
+      }
+
+      return `crt ${option} ${config.crt.get(option)}`
     },
-  }
+    '-ga'() {
+      return config.crt.getAll()
+    },
+    '-r'() {
+      config.crt.reset()
+    },
+  },
+  shaderPaths: {
+    '-a'(path: string) {
+      if (config.shaderPaths.has(path)) {
+        throw `Shader path already exists: ${path}`
+      }
+
+      config.shaderPaths.add(path)
+    },
+    '-d'(path: string) {
+      config.shaderPaths.delete(path)
+    },
+    '-l'() {
+      return config.shaderPaths.getList()
+    },
+    '-r'() {
+      config.shaderPaths.reset()
+    },
+  },
 }
