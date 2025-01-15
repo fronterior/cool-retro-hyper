@@ -33,7 +33,7 @@ var defaultCRTOptions = {
   bazelSize: 0.4
 };
 function createCRTEffect({
-  options,
+  crtOptions,
   noiseTexture: noiseTexture2,
   userEffectPasses,
   glslEffects
@@ -44,20 +44,20 @@ function createCRTEffect({
     { format: THREE.RGBAFormat, stencilBuffer: false }
   );
   const savePass = new CopyPass(saveTarget);
-  const burnInTime = options.crt?.burnInTime ?? defaultCRTOptions.burnInTime;
-  const bloom = options.crt?.bloom ?? defaultCRTOptions.bloom;
-  const jitter = options.crt?.jitter ?? defaultCRTOptions.jitter;
-  const screenCurvature = options.crt?.screenCurvature ?? defaultCRTOptions.screenCurvature;
-  const noise = options.crt?.noise ?? defaultCRTOptions.noise;
-  const glowingLine = options.crt?.glowingLine ?? defaultCRTOptions.glowingLine;
-  const flickering = options.crt?.flickering ?? defaultCRTOptions.flickering;
-  const ambientLight = options.crt?.ambientLight ?? defaultCRTOptions.ambientLight;
-  const pixelHeight = options.crt?.pixelHeight ?? defaultCRTOptions.pixelHeight;
-  const pixelization = options.crt?.pixelization ?? defaultCRTOptions.pixelization;
-  const rgbSplit = options.crt?.rgbSplit ?? defaultCRTOptions.rgbSplit;
-  const rgbSplitXDistance = options.crt?.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance;
-  const rgbSplitYDistance = options.crt?.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance;
-  const bazelSize = options.crt?.bazelSize ?? defaultCRTOptions.bazelSize;
+  const burnInTime = crtOptions.burnInTime ?? defaultCRTOptions.burnInTime;
+  const bloom = crtOptions.bloom ?? defaultCRTOptions.bloom;
+  const jitter = crtOptions.jitter ?? defaultCRTOptions.jitter;
+  const screenCurvature = crtOptions.screenCurvature ?? defaultCRTOptions.screenCurvature;
+  const noise = crtOptions.noise ?? defaultCRTOptions.noise;
+  const glowingLine = crtOptions.glowingLine ?? defaultCRTOptions.glowingLine;
+  const flickering = crtOptions.flickering ?? defaultCRTOptions.flickering;
+  const ambientLight = crtOptions.ambientLight ?? defaultCRTOptions.ambientLight;
+  const pixelHeight = crtOptions.pixelHeight ?? defaultCRTOptions.pixelHeight;
+  const pixelization = crtOptions.pixelization ?? defaultCRTOptions.pixelization;
+  const rgbSplit = crtOptions.rgbSplit ?? defaultCRTOptions.rgbSplit;
+  const rgbSplitXDistance = crtOptions.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance;
+  const rgbSplitYDistance = crtOptions.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance;
+  const bazelSize = crtOptions.bazelSize ?? defaultCRTOptions.bazelSize;
   const burnInEffect = new Effect("burn-in", glslEffects.burnIn, {
     blendFunction: BlendFunction.NORMAL,
     uniforms: /* @__PURE__ */ new Map([
@@ -270,13 +270,17 @@ var XTermConnector = class {
     const canvasList = term2._core.screenElement.getElementsByTagName("canvas");
     return canvasList;
   }
-  connect(xTerm, crtEffect2, options) {
+  connect({
+    xTerm,
+    crtEffect: crtEffect2,
+    fps
+  }) {
     if (!this.canvas.parentNode) {
       document.getElementById("hyper")?.append(this.canvas);
     }
     this.resetScreenElementOpacity();
     this.setPasses(crtEffect2.passes);
-    this.options = options;
+    this.options = { fps };
     this.passes = crtEffect2.passes;
     this.screenElement = xTerm._core.screenElement;
     this.resetScreenElementOpacity = (() => {
