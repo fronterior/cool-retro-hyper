@@ -19,8 +19,6 @@ import { CRTEffect } from './types'
 
 export type ConnectOptions = {
   fps?: number
-  shaderPaths?: string[]
-  coordinateTransform?: (x: number, y: number) => [number, number]
 }
 
 export class XTermConnector {
@@ -41,9 +39,9 @@ export class XTermConnector {
   private passes: Pass[] = []
   private screenElement: HTMLElement
 
-  private cancelDraw = () => { }
-  private resetScreenElementOpacity = () => { }
-  private removeMouseHandlers = () => { }
+  private cancelDraw = () => {}
+  private resetScreenElementOpacity = () => {}
+  private removeMouseHandlers = () => {}
   private coordinateTransform = (x: number, y: number) => [x, y] as const
 
   private resizeObserver?: ResizeObserver
@@ -136,7 +134,15 @@ export class XTermConnector {
     return canvasList
   }
 
-  connect(xTerm: Terminal, crtEffect: CRTEffect, options: ConnectOptions) {
+  connect({
+    xTerm,
+    crtEffect,
+    fps,
+  }: {
+    xTerm: Terminal
+    crtEffect: CRTEffect
+    fps: number
+  }) {
     if (!this.canvas.parentNode) {
       document.getElementById('hyper')?.append(this.canvas)
     }
@@ -144,7 +150,7 @@ export class XTermConnector {
     this.resetScreenElementOpacity()
 
     this.setPasses(crtEffect.passes)
-    this.options = options
+    this.options = { fps }
     this.passes = crtEffect.passes
     this.screenElement = xTerm._core.screenElement
 
@@ -285,7 +291,7 @@ export class XTermConnector {
     let x = (clientX - left) / width
     let y = (bottom - clientY) / height
 
-      ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
+    ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
 
     const copy: Record<string, unknown> = {}
     for (const attr in ev) {
@@ -297,7 +303,7 @@ export class XTermConnector {
     const TargetEvent = ev.constructor as typeof MouseEvent | typeof WheelEvent
 
     const clonedEvent = new TargetEvent(ev.type, copy)
-      ; (clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
+    ;(clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
     this.screenElement.dispatchEvent(clonedEvent)
   }
 

@@ -22,14 +22,14 @@ export const defaultCRTOptions = {
 }
 
 type CreateCRTEffectParameters = {
-  options: CoolRetroHyperConfiguration
+  crtOptions: NonNullable<CoolRetroHyperConfiguration['crt']>
   noiseTexture: THREE.Texture
   userEffectPasses: EffectPass[]
   glslEffects: typeof glsl
 }
 
 export function createCRTEffect({
-  options,
+  crtOptions,
   noiseTexture,
   userEffectPasses,
   glslEffects,
@@ -41,25 +41,23 @@ export function createCRTEffect({
   )
   const savePass = new CopyPass(saveTarget)
 
-  const burnInTime = options.crt?.burnInTime ?? defaultCRTOptions.burnInTime
-  const bloom = options.crt?.bloom ?? defaultCRTOptions.bloom
-  const jitter = options.crt?.jitter ?? defaultCRTOptions.jitter
+  const burnInTime = crtOptions.burnInTime ?? defaultCRTOptions.burnInTime
+  const bloom = crtOptions.bloom ?? defaultCRTOptions.bloom
+  const jitter = crtOptions.jitter ?? defaultCRTOptions.jitter
   const screenCurvature =
-    options.crt?.screenCurvature ?? defaultCRTOptions.screenCurvature
-  const noise = options.crt?.noise ?? defaultCRTOptions.noise
-  const glowingLine = options.crt?.glowingLine ?? defaultCRTOptions.glowingLine
-  const flickering = options.crt?.flickering ?? defaultCRTOptions.flickering
-  const ambientLight =
-    options.crt?.ambientLight ?? defaultCRTOptions.ambientLight
-  const pixelHeight = options.crt?.pixelHeight ?? defaultCRTOptions.pixelHeight
-  const pixelization =
-    options.crt?.pixelization ?? defaultCRTOptions.pixelization
-  const rgbSplit = options.crt?.rgbSplit ?? defaultCRTOptions.rgbSplit
+    crtOptions.screenCurvature ?? defaultCRTOptions.screenCurvature
+  const noise = crtOptions.noise ?? defaultCRTOptions.noise
+  const glowingLine = crtOptions.glowingLine ?? defaultCRTOptions.glowingLine
+  const flickering = crtOptions.flickering ?? defaultCRTOptions.flickering
+  const ambientLight = crtOptions.ambientLight ?? defaultCRTOptions.ambientLight
+  const pixelHeight = crtOptions.pixelHeight ?? defaultCRTOptions.pixelHeight
+  const pixelization = crtOptions.pixelization ?? defaultCRTOptions.pixelization
+  const rgbSplit = crtOptions.rgbSplit ?? defaultCRTOptions.rgbSplit
   const rgbSplitXDistance =
-    options.crt?.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance
+    crtOptions.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance
   const rgbSplitYDistance =
-    options.crt?.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
-  const bazelSize = options.crt?.bazelSize ?? defaultCRTOptions.bazelSize
+    crtOptions.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
+  const bazelSize = crtOptions.bazelSize ?? defaultCRTOptions.bazelSize
 
   const burnInEffect = new Effect('burn-in', glslEffects.burnIn, {
     blendFunction: BlendFunction.NORMAL,

@@ -97,24 +97,20 @@ export function decorateHyper(
         return
       }
 
-      const options = Object.assign(
-        {},
-        CoolRetroHyper.defaultConfig,
-        window.config.getConfig()?.coolRetroHyper ?? {},
-      )
+      const options = Object.assign({}, CoolRetroHyper.defaultConfig)
 
       const crtEffect = createCRTEffect({
-        options,
+        crtOptions: window.config.getConfig()?.coolRetroHyper?.crt ?? {},
         noiseTexture: this.noiseTexture,
         userEffectPasses: this.userEffectPasses,
         glslEffects,
       })
 
-      CoolRetroHyper.xTermConnector.connect(
-        firstVisibleTerm.term,
+      CoolRetroHyper.xTermConnector.connect({
+        xTerm: firstVisibleTerm.term,
         crtEffect,
-        options,
-      )
+        fps: options.fps,
+      })
     }
 
     getVisibleTermsIdsForRootId(state: HyperState, activeRootId: string) {
