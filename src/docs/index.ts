@@ -167,14 +167,14 @@ function run(cmd: string) {
     config.getConfig().shaderPaths.map((url) => fetchUserShader(url)),
   ).then((userEffectPasses) => {
     const crtEffect = createCRTEffect({
-      options: configuration,
+      crtOptions: configuration.crt,
       noiseTexture,
       glslEffects,
       userEffectPasses: userEffectPasses
         .filter(({ status }) => status === 'fulfilled')
         .map(({ value }) => value),
     })
-    xTermConnector.connect(term, crtEffect, connectOptions)
+    xTermConnector.connect({ xTerm: term, crtEffect, fps: connectOptions.fps })
   })
 }
 
@@ -329,7 +329,7 @@ function fetchUserShader(url: string) {
 }
 
 const crtEffect = createCRTEffect({
-  options: configuration,
+  crtOptions: configuration.crt ?? {},
   noiseTexture,
   glslEffects,
   userEffectPasses: [],
@@ -341,18 +341,18 @@ const connectOptions = {
 }
 
 const xTermConnector = new XTermConnector()
-xTermConnector.connect(term, crtEffect, connectOptions)
+xTermConnector.connect({ xTerm: term, crtEffect, fps: connectOptions.fps })
 
 Promise.allSettled(
   config.getConfig().shaderPaths.map((url) => fetchUserShader(url)),
 ).then((userEffectPasses) => {
   const crtEffect = createCRTEffect({
-    options: configuration,
+    crtOptions: configuration.crt ?? {},
     noiseTexture,
     glslEffects,
     userEffectPasses: userEffectPasses
       .filter(({ status }) => status === 'fulfilled')
       .map(({ value }) => value),
   })
-  xTermConnector.connect(term, crtEffect, connectOptions)
+  xTermConnector.connect({ xTerm: term, crtEffect, fps: connectOptions.fps })
 })

@@ -697,12 +697,12 @@ function run(cmd) {
     config.getConfig().shaderPaths.map((url) => fetchUserShader(url))
   ).then((userEffectPasses) => {
     const crtEffect2 = createCRTEffect({
-      options: configuration3,
+      crtOptions: configuration3.crt,
       noiseTexture,
       glslEffects: glsl_exports,
       userEffectPasses: userEffectPasses.filter(({ status }) => status === "fulfilled").map(({ value }) => value)
     });
-    xTermConnector.connect(term, crtEffect2, connectOptions);
+    xTermConnector.connect({ xTerm: term, crtEffect: crtEffect2, fps: connectOptions.fps });
   });
 }
 var inputHistory = [];
@@ -827,7 +827,7 @@ function fetchUserShader(url) {
   });
 }
 var crtEffect = createCRTEffect({
-  options: configuration2,
+  crtOptions: configuration2.crt ?? {},
   noiseTexture,
   glslEffects: glsl_exports,
   userEffectPasses: []
@@ -837,15 +837,15 @@ var connectOptions = {
   shaderPaths: configuration2.shaderPaths
 };
 var xTermConnector = new XTermConnector();
-xTermConnector.connect(term, crtEffect, connectOptions);
+xTermConnector.connect({ xTerm: term, crtEffect, fps: connectOptions.fps });
 Promise.allSettled(
   config.getConfig().shaderPaths.map((url) => fetchUserShader(url))
 ).then((userEffectPasses) => {
   const crtEffect2 = createCRTEffect({
-    options: configuration2,
+    crtOptions: configuration2.crt ?? {},
     noiseTexture,
     glslEffects: glsl_exports,
     userEffectPasses: userEffectPasses.filter(({ status }) => status === "fulfilled").map(({ value }) => value)
   });
-  xTermConnector.connect(term, crtEffect2, connectOptions);
+  xTermConnector.connect({ xTerm: term, crtEffect: crtEffect2, fps: connectOptions.fps });
 });
