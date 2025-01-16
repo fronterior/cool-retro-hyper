@@ -30,6 +30,8 @@ canvas.cool-retro-hyper {
   left: 0;
   width: 100% !important;
   height: 100% !important;
+  z-index: 1;
+  cursor: text;
 }
 `.trim()
 
