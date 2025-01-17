@@ -42,8 +42,10 @@ vec2 borderReflect(vec2 p)
 	
 	p -= 0.5;
 
-	vec2 normal = vec2(roundSquare(p-epsx,b,r)-roundSquare(p+epsx,b,r),
-					   roundSquare(p-epsy,b,r)-roundSquare(p+epsy,b,r))/eps;
+	vec2 normal = vec2(
+		roundSquare(p-epsx,b,r)-roundSquare(p+epsx,b,r),
+		roundSquare(p-epsy,b,r)-roundSquare(p+epsy,b,r)
+	) / eps;
 
 	if (max2(abs(p) - b) < 0.0 || abs(normal.x * normal.y) > 0.1)
 		return vec2(-1.0);
@@ -62,7 +64,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 	float alpha = 0.0;
 
 	float XbazelMargin = bazelSize * 0.01;
-	float YbazelMargin = XbazelMargin * resolution.x / resolution.y;
+	float YbazelMargin = XbazelMargin * resolution.x / resolution.y; // FIXME: same x, y bazel size
 
 	float innerShadowLength = 0.01;
   float innerShadow = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), coords) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), coords));

@@ -18,7 +18,7 @@ export const defaultCRTOptions = {
   rgbSplit: 0.25,
   rgbSplitXDistance: 0.13,
   rgbSplitYDistance: 0.08,
-  bazelSize: 0.4,
+  bazelSize: 0.12,
 }
 
 type CreateCRTEffectParameters = {
@@ -111,7 +111,7 @@ export function createCRTEffect({
 
   const scaleEffects = [
     new Effect('scale', glslEffects.scale, {
-      defines: new Map([['scale', '0.985']]),
+      defines: new Map([['scale', '0.99']]),
     }),
     new Effect('sampling', glslEffects.sampling, {
       blendFunction: BlendFunction.NORMAL,
