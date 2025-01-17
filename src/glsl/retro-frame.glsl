@@ -14,6 +14,10 @@ float max2(vec2 v) {
 	return max(v.x, v.y);
 }
 
+float min2(vec2 v) {
+	return min(v.x, v.y);
+}
+
 vec4 texture(sampler2D buf, vec2 uv) {
 	if(!(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0))
 		return texture2D(buf, uv);
@@ -52,18 +56,24 @@ vec2 borderReflect(vec2 p)
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 	vec2 coords = distortCoordinates(uv);
-	vec3 color = texture(inputBuffer, coords).rgb;	// fragColor = vec4(color, 1.0);
+
+	vec3 color = texture(inputBuffer, coords).rgb;
 
 	float alpha = 0.0;
-	float outShadowLength = 0.65 * screenCurvature;
-	 
+
 	float XbazelMargin = bazelSize * 0.01;
 	float YbazelMargin = XbazelMargin * resolution.x / resolution.y;
+
+	float innerShadowLength = 0.01;
+  float innerShadow = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), coords) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), coords));
+  color *= innerShadow;
+
+	float outShadowLength = 0.65 * screenCurvature;
 	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-XbazelMargin, -YbazelMargin), coords) + smoothstep(vec2(1.0 + XbazelMargin, 1.0 + YbazelMargin), vec2(1.0 + outShadowLength), coords));
 	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);
-	color += frameColor * outShadow;
-
-	vec2 reflected = borderReflect(coords);
-	color += max(texture(inputBuffer, reflected).rgb * 0.3 - 0.1, 0.0);
+ 
+	vec2 reflected = borderReflect(coords);  
+	float innerShadow2 = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), reflected) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), reflected)); // FIXME: dedup  
+	color += max(texture(inputBuffer, reflected).rgb * 0.5, 0.0) * innerShadow2;
 	fragColor = vec4(color, 1.0);
 }
