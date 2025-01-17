@@ -69,7 +69,8 @@ module.exports = {
         rgbSplit: 0.25,
         rgbSplitXDistance: 0.13,
         rgbSplitYDistance: 0.08,
-        bazelSize: 0.4
+        bazelSize: 0.12,
+        frameColor: '#191919',
       },
       shaderPaths: [
         // glsl file paths
