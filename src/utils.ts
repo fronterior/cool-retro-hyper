@@ -96,6 +96,13 @@ export function fetchUserShader(url: string) {
 }
 
 export function hex2rgb(hexString: string) {
+  hexString =
+    hexString.length === 4
+      ? [...hexString].reduce(
+          (acc, char, i) => (i ? acc + char + char : char),
+          '',
+        )
+      : hexString
   let hex = ''
   const rgb = []
   for (const char of hexString.slice(1)) {
