@@ -1,5 +1,4 @@
-import { EffectPass } from 'postprocessing'
-import { EffectComposer, Pass, RenderPass } from 'postprocessing'
+import { EffectComposer, EffectPass, Pass, RenderPass } from 'postprocessing'
 import {
   CanvasTexture,
   Clock,

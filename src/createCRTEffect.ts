@@ -1,6 +1,11 @@
 import * as THREE from 'three'
-import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
-import { EffectPass } from 'postprocessing'
+import {
+  Effect,
+  EffectPass,
+  BlendFunction,
+  CopyPass,
+  BloomEffect,
+} from 'postprocessing'
 import type * as glsl from './glsl'
 import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 import { hex2rgb } from './utils'
