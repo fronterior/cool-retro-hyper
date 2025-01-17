@@ -94,3 +94,18 @@ export function fetchUserShader(url: string) {
       )
     })
 }
+
+export function hex2rgb(hexString: string) {
+  let hex = ''
+  const rgb = []
+  for (const char of hexString.slice(1)) {
+    hex += char
+    if (hex.length === 2) {
+      rgb.push(Number(`0x${hex}`))
+
+      hex = ''
+    }
+  }
+
+  return rgb
+}

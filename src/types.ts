@@ -19,6 +19,7 @@ export type CoolRetroHyperConfiguration = {
     rgbSplitXDistance?: number
     rgbSplitYDistance?: number
     bazelSize?: number
+    frameColor?: string
   }
 }
 

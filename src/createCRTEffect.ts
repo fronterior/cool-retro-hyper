@@ -3,6 +3,7 @@ import { Effect, BlendFunction, CopyPass, BloomEffect } from 'postprocessing'
 import { EffectPass } from 'postprocessing'
 import type * as glsl from './glsl'
 import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
+import { hex2rgb } from './utils'
 
 export const defaultCRTOptions = {
   bloom: 2, // 0 ~ 5
@@ -19,6 +20,7 @@ export const defaultCRTOptions = {
   rgbSplitXDistance: 0.13,
   rgbSplitYDistance: 0.08,
   bazelSize: 0.12,
+  frameColor: '#191919',
 }
 
 type CreateCRTEffectParameters = {
@@ -58,6 +60,7 @@ export function createCRTEffect({
   const rgbSplitYDistance =
     crtOptions.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance
   const bazelSize = crtOptions.bazelSize ?? defaultCRTOptions.bazelSize
+  const frameColor = crtOptions.frameColor ?? defaultCRTOptions.frameColor
 
   const burnInEffect = new Effect('burn-in', glslEffects.burnIn, {
     blendFunction: BlendFunction.NORMAL,
@@ -102,7 +105,9 @@ export function createCRTEffect({
     uniforms: new Map<string, THREE.Uniform<unknown>>([
       [
         'frameColor',
-        new THREE.Uniform(new THREE.Vector3(25 / 255, 25 / 255, 25 / 255)),
+        new THREE.Uniform(
+          new THREE.Vector3(...hex2rgb(frameColor).map((v) => v / 255)),
+        ),
       ],
       ['screenCurvature', new THREE.Uniform(screenCurvature)],
       ['bazelSize', new THREE.Uniform(bazelSize)],
