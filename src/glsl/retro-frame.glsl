@@ -71,7 +71,8 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {
 	float outShadowLength = 0.65 * screenCurvature;
 	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-XbazelMargin, -YbazelMargin), coords) + smoothstep(vec2(1.0 + XbazelMargin, 1.0 + YbazelMargin), vec2(1.0 + outShadowLength), coords));
 	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);
- 
+  color += frameColor * outShadow;
+
 	vec2 reflected = borderReflect(coords);  
 	float innerShadow2 = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), reflected) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), reflected)); // FIXME: dedup  
 	color += max(texture(inputBuffer, reflected).rgb * 0.5, 0.0) * innerShadow2;
