@@ -26,6 +26,7 @@ const noiseTexture = await new Promise<THREE.Texture>((res) => {
 })
 
 config.crt.set('screenCurvature', 0.3)
+config.crt.set('frameColor', '#2A1B6F')
 config.shaderPaths.add(
   'https://raw.githubusercontent.com/fronterior/cool-retro-hyper/refs/heads/main/examples/neonwave-sunrise.glsl',
 )

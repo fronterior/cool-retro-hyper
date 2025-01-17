@@ -12,9 +12,50 @@ import { WebLinksAddon } from "https://cdn.jsdelivr.net/npm/@xterm/addon-web-lin
 import stringArgv from "https://cdn.jsdelivr.net/npm/string-argv@0.3.2/+esm";
 
 // src/createCRTEffect.ts
+import * as THREE2 from "three";
+import {
+  Effect as Effect2,
+  EffectPass as EffectPass2,
+  BlendFunction as BlendFunction2,
+  CopyPass,
+  BloomEffect
+} from "postprocessing";
+
+// src/utils.ts
+import path from "path";
 import * as THREE from "three";
-import { Effect, BlendFunction, CopyPass, BloomEffect } from "postprocessing";
 import { EffectPass } from "postprocessing";
+import { Effect } from "postprocessing";
+import { BlendFunction } from "postprocessing";
+var noiseTexturePromise = new Promise((res) => {
+  new THREE.TextureLoader().load(
+    path.resolve(__dirname, "../src/assets/images/allNoise512.png"),
+    (texture) => {
+      texture.minFilter = THREE.LinearFilter;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      res(texture);
+    }
+  );
+});
+function hex2rgb(hexString) {
+  hexString = hexString.length === 4 ? [...hexString].reduce(
+    (acc, char, i) => i ? acc + char + char : char,
+    ""
+  ) : hexString;
+  let hex = "";
+  const rgb = [];
+  for (const char of hexString.slice(1)) {
+    hex += char;
+    if (hex.length === 2) {
+      rgb.push(Number(`0x${hex}`));
+      hex = "";
+    }
+  }
+  return rgb;
+}
+
+// src/createCRTEffect.ts
 var defaultCRTOptions = {
   bloom: 2,
   // 0 ~ 5
@@ -30,7 +71,8 @@ var defaultCRTOptions = {
   rgbSplit: 0.25,
   rgbSplitXDistance: 0.13,
   rgbSplitYDistance: 0.08,
-  bazelSize: 0.4
+  bazelSize: 0.12,
+  frameColor: "#191919"
 };
 function createCRTEffect({
   crtOptions,
@@ -38,10 +80,10 @@ function createCRTEffect({
   userEffectPasses,
   glslEffects
 }) {
-  const saveTarget = new THREE.WebGLRenderTarget(
+  const saveTarget = new THREE2.WebGLRenderTarget(
     window.innerWidth,
     window.innerHeight,
-    { format: THREE.RGBAFormat, stencilBuffer: false }
+    { format: THREE2.RGBAFormat, stencilBuffer: false }
   );
   const savePass = new CopyPass(saveTarget);
   const burnInTime = crtOptions.burnInTime ?? defaultCRTOptions.burnInTime;
@@ -58,68 +100,71 @@ function createCRTEffect({
   const rgbSplitXDistance = crtOptions.rgbSplitXDistance ?? defaultCRTOptions.rgbSplitXDistance;
   const rgbSplitYDistance = crtOptions.rgbSplitYDistance ?? defaultCRTOptions.rgbSplitYDistance;
   const bazelSize = crtOptions.bazelSize ?? defaultCRTOptions.bazelSize;
-  const burnInEffect = new Effect("burn-in", glslEffects.burnIn, {
-    blendFunction: BlendFunction.NORMAL,
+  const frameColor = crtOptions.frameColor ?? defaultCRTOptions.frameColor;
+  const burnInEffect = new Effect2("burn-in", glslEffects.burnIn, {
+    blendFunction: BlendFunction2.NORMAL,
     uniforms: /* @__PURE__ */ new Map([
-      ["burnInSource", new THREE.Uniform(saveTarget.texture)],
-      ["burnInTime", new THREE.Uniform(burnInTime)]
+      ["burnInSource", new THREE2.Uniform(saveTarget.texture)],
+      ["burnInTime", new THREE2.Uniform(burnInTime)]
     ])
   });
-  const retroEffect = new Effect("retro", glslEffects.retro, {
-    blendFunction: BlendFunction.NORMAL,
+  const retroEffect = new Effect2("retro", glslEffects.retro, {
+    blendFunction: BlendFunction2.NORMAL,
     uniforms: /* @__PURE__ */ new Map([
-      ["fontColor", new THREE.Uniform(new THREE.Vector3(1, 1, 1))],
-      ["chromaColor", new THREE.Uniform(2.5)],
-      ["staticNoise", new THREE.Uniform(noise * 0.1)],
-      ["noiseSource", new THREE.Uniform(1.01)],
+      ["fontColor", new THREE2.Uniform(new THREE2.Vector3(1, 1, 1))],
+      ["chromaColor", new THREE2.Uniform(2.5)],
+      ["staticNoise", new THREE2.Uniform(noise * 0.1)],
+      ["noiseSource", new THREE2.Uniform(1.01)],
       [
         "jitter",
-        new THREE.Uniform(new THREE.Vector2(1e-3 * jitter, 1e-3 * jitter))
+        new THREE2.Uniform(new THREE2.Vector2(1e-3 * jitter, 1e-3 * jitter))
       ],
-      ["glowingLine", new THREE.Uniform(glowingLine * 0.1)],
-      ["flickering", new THREE.Uniform(flickering)],
-      ["ambientLight", new THREE.Uniform(ambientLight * 1e-3)],
-      ["pixelHeight", new THREE.Uniform(pixelHeight)],
-      ["pixelization", new THREE.Uniform(pixelization)],
-      ["rgbSplit", new THREE.Uniform(rgbSplit)],
-      ["rgbSplitXDistance", new THREE.Uniform(rgbSplitXDistance * 0.01)],
-      ["rgbSplitYDistance", new THREE.Uniform(rgbSplitYDistance * 0.01)]
+      ["glowingLine", new THREE2.Uniform(glowingLine * 0.1)],
+      ["flickering", new THREE2.Uniform(flickering)],
+      ["ambientLight", new THREE2.Uniform(ambientLight * 1e-3)],
+      ["pixelHeight", new THREE2.Uniform(pixelHeight)],
+      ["pixelization", new THREE2.Uniform(pixelization)],
+      ["rgbSplit", new THREE2.Uniform(rgbSplit)],
+      ["rgbSplitXDistance", new THREE2.Uniform(rgbSplitXDistance * 0.01)],
+      ["rgbSplitYDistance", new THREE2.Uniform(rgbSplitYDistance * 0.01)]
     ])
   });
   const noiseSource = retroEffect.uniforms.get("noiseSource");
   if (noiseSource) noiseSource.value = noiseTexture2;
   const bloomEffect = new BloomEffect({
     kernelSize: bloom,
-    blendFunction: BlendFunction.LIGHTEN
+    blendFunction: BlendFunction2.LIGHTEN
   });
-  const frameEffect = new Effect("retro-frame", glslEffects.retroFrame, {
-    blendFunction: BlendFunction.NORMAL,
+  const frameEffect = new Effect2("retro-frame", glslEffects.retroFrame, {
+    blendFunction: BlendFunction2.NORMAL,
     uniforms: /* @__PURE__ */ new Map([
       [
         "frameColor",
-        new THREE.Uniform(new THREE.Vector3(25 / 255, 25 / 255, 25 / 255))
+        new THREE2.Uniform(
+          new THREE2.Vector3(...hex2rgb(frameColor).map((v) => v / 255))
+        )
       ],
-      ["screenCurvature", new THREE.Uniform(screenCurvature)],
-      ["bazelSize", new THREE.Uniform(bazelSize)]
+      ["screenCurvature", new THREE2.Uniform(screenCurvature)],
+      ["bazelSize", new THREE2.Uniform(bazelSize)]
     ])
   });
   const scaleEffects = [
-    new Effect("scale", glslEffects.scale, {
-      defines: /* @__PURE__ */ new Map([["scale", "0.985"]])
+    new Effect2("scale", glslEffects.scale, {
+      defines: /* @__PURE__ */ new Map([["scale", "0.99"]])
     }),
-    new Effect("sampling", glslEffects.sampling, {
-      blendFunction: BlendFunction.NORMAL
+    new Effect2("sampling", glslEffects.sampling, {
+      blendFunction: BlendFunction2.NORMAL
     })
   ];
   return {
     passes: [
-      new EffectPass(void 0, ...scaleEffects),
-      new EffectPass(void 0, bloomEffect),
-      ...burnInEffect ? [new EffectPass(void 0, burnInEffect)] : [],
+      new EffectPass2(void 0, ...scaleEffects),
+      new EffectPass2(void 0, bloomEffect),
+      ...burnInEffect ? [new EffectPass2(void 0, burnInEffect)] : [],
       ...userEffectPasses,
-      new EffectPass(void 0, retroEffect),
+      new EffectPass2(void 0, retroEffect),
       savePass,
-      ...screenCurvature ? [new EffectPass(void 0, frameEffect)] : []
+      ...screenCurvature ? [new EffectPass2(void 0, frameEffect)] : []
     ],
     coordinateTransform(x, y) {
       const cx = x - 0.5;
@@ -147,7 +192,7 @@ var burn_in_default = "\nuniform lowp sampler2D burnInSource;\nuniform lowp floa
 var retro_default = "// adapted from https://github.com/Swordfish90/cool-retro-term/blob/master/app/qml/ShaderTerminal.qml\n\nuniform highp vec3 fontColor;\nuniform highp vec3 backgroundColor;\nuniform lowp float chromaColor;\n\nuniform highp float staticNoise;\nuniform lowp sampler2D noiseSource;\n\nuniform lowp float horizontalSyncStrength;\nuniform lowp float horizontalSyncFrequency;\n\nuniform lowp vec2 jitter;\n\nuniform highp float glowingLine;\n\nuniform lowp float flickering;\nuniform lowp float ambientLight;\n\nuniform lowp float pixelHeight;\nuniform bool pixelization;\n\nuniform lowp float rgbSplit;\nuniform lowp float rgbSplitXDistance;\nuniform lowp float rgbSplitYDistance;\n\nfloat sum2(vec2 v) {\n	return v.x + v.y;\n}\n\nfloat rgb2grey(vec3 v){\n	float dp = dot(v, vec3(0.21, 0.72, 0.04));\n	return dp == 0.0 ? 0.00001 : dp;\n}\n\nfloat randomPass(vec2 coords) {\n	return fract(smoothstep(0.0, -120.0, coords.y - (resolution.y + 120.0) * fract(-time * 0.15)));\n}\n\nfloat getScanlineIntensity(vec2 coords) {\n	float result = 1.0;\n	float val = 0.0;\n	vec2 rasterizationCoords = fract(coords * resolution * 0.0365 * pixelHeight);\n	val += smoothstep(0.0, 0.5, rasterizationCoords.y);\n	val -= smoothstep(0.5, 2.0 * 0.5, rasterizationCoords.y);\n	result *= mix(0.3, 1.0, val);\n\n	if (pixelization) {\n		val = 0.0;\n		val += smoothstep(0.0, 0.5, rasterizationCoords.x);\n		val -= smoothstep(0.5, 2.0 * 0.5, rasterizationCoords.x);\n		result *= mix(0.4, 1.0, val);\n	}\n\n	return result;\n}\n\nvec4 texture(sampler2D buf, vec2 uv) {\n	if(!(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0))\n		return texture2D(buf, uv);\n}\n\nfloat noise(vec2 uv) {\n	float limitedTime = mod(time, 10.0);\n  vec2 v = vec2(uv.x + limitedTime * 0.5, uv.y + sin(limitedTime) * 0.5);\n\n  return fract(sin(dot(v, vec2(12.9898, 78.233))) * 43758.5453);  \n}\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {\n	vec2 initialCoords = vec2(fract(time/2.0), fract(time/PI));\n	vec4 initialNoiseTexel = texture2D(noiseSource, initialCoords);\n	float randval = initialNoiseTexel.r;\n	float distortionScale = step(1.0 - horizontalSyncFrequency, randval) * randval * horizontalSyncStrength * 0.1;\n	float distortionFreq = mix(4.0, 40.0, initialNoiseTexel.g);\n\n	vec2 coords = uv;\n\n	float dst = sin((coords.y + time) * distortionFreq);\n	coords.x += dst * distortionScale;\n\n	vec4 noiseTexel = texture2D(noiseSource, resolution / (vec2(512, 512) * 0.75) * coords + vec2(fract(time * 1000.0 / 51.0), fract(time * 1000.0 / 237.0)));\n\n	// jitter\n	vec2 offset = vec2(noiseTexel.b, noiseTexel.a) - vec2(0.5);\n	coords += offset * jitter;\n	coords = clamp(coords, 0.0, 1.0);\n  \n	float color = 0.0001;\n\n	// static noise\n	float distance = length(vec2(0.5) - uv);\n\n  vec2 scaledUv = uv * 10.0;\n  \n  float noiseValue = noise(scaledUv + noise(scaledUv.yx));\n\n  noiseValue += distortionScale * 3.0;\n  color += staticNoise * noiseValue * (1.0 - distance * 1.3);\n\n\n	// glowingLine\n	color += randomPass(uv * resolution) * glowingLine * 0.2;\n\n	vec3 txt_color = texture(inputBuffer, coords).rgb;\n\n	if (rgbSplit != 0.0) {\n		vec3 rightColor = texture2D(inputBuffer, coords + vec2(-rgbSplitXDistance, -rgbSplitYDistance)).rgb;\n		vec3 leftColor  = texture2D(inputBuffer, coords + vec2(rgbSplitXDistance, rgbSplitYDistance)).rgb;\n		txt_color.r = rightColor.r * 0.6 * rgbSplit + txt_color.r * (1.0 - 0.6 * rgbSplit);\n		txt_color.g =  leftColor.g * 0.4 * rgbSplit + txt_color.g * (1.0 - 0.4 * rgbSplit);\n		txt_color.b =  leftColor.b * 0.2 * rgbSplit + txt_color.b * (1.0 - 0.2 * rgbSplit);\n	}\n\n	float greyscale_color = rgb2grey(txt_color);\n	float reflectionMask = sum2(step(vec2(0.0), uv) - step(vec2(1.0), uv));\n	reflectionMask = clamp(reflectionMask, 0.0, 1.0);\n\n	vec3 foregroundColor = mix(fontColor, txt_color * fontColor / greyscale_color, chromaColor);\n	vec3 finalColor = mix(backgroundColor, foregroundColor, greyscale_color * reflectionMask);\n\n	finalColor += fontColor.rgb * vec3(color);\n\n	finalColor *= 1.0 + (initialNoiseTexel.g - 0.5) * flickering;\n	finalColor += vec3(ambientLight) * (1.0 - distance) * (1.0 - distance);\n\n	if (pixelHeight != 0.0)\n		finalColor *= getScanlineIntensity(coords);\n\n	fragColor = vec4(finalColor, 1.0);\n}\n";
 
 // src/glsl/retro-frame.glsl
-var retro_frame_default = "// adapted from https://github.com/Swordfish90/cool-retro-term/blob/master/app/qml/ShaderTerminal.qml\n\nuniform lowp float screenCurvature;\nuniform lowp vec3 frameColor;\nuniform lowp float bazelSize;\n\nvec2 distortCoordinates(vec2 coords){\n	vec2 cc = (coords - vec2(0.5, 0.5));\n	float dist = dot(cc, cc) * screenCurvature;\n	return (coords + cc * (1. + dist) * dist);\n}\n\nfloat max2(vec2 v) {\n	return max(v.x, v.y);\n}\n\nvec4 texture(sampler2D buf, vec2 uv) {\n	if(!(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0))\n		return texture2D(buf, uv);\n\n	return vec4(0.0);\n}\n\nfloat roundSquare(vec2 p, vec2 b, float r) {\n	return length(max(abs(p)-b,0.0))-r;\n}\n\n// Calculate normal to distance function and move along\n// normal with distance to get point of reflection\nvec2 borderReflect(vec2 p)\n{\n	float r = 0.01;\n	float eps = 0.0001;\n	vec2 epsx = vec2(eps,0.0);\n	vec2 epsy = vec2(0.0,eps);\n	vec2 b = (0.999+vec2(r,r))* 0.5;\n	r /= 3.0;\n	\n	p -= 0.5;\n\n	vec2 normal = vec2(roundSquare(p-epsx,b,r)-roundSquare(p+epsx,b,r),\n					   roundSquare(p-epsy,b,r)-roundSquare(p+epsy,b,r))/eps;\n\n	if (max2(abs(p) - b) < 0.0 || abs(normal.x * normal.y) > 0.1)\n		return vec2(-1.0);\n\n	float d = roundSquare(p, b, r);\n	p += 0.5;\n\n	return p + d*normal;\n}\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {\n	vec2 coords = distortCoordinates(uv);\n	vec3 color = texture(inputBuffer, coords).rgb;	// fragColor = vec4(color, 1.0);\n\n	float alpha = 0.0;\n	float outShadowLength = 0.65 * screenCurvature;\n	 \n	float XbazelMargin = bazelSize * 0.01;\n	float YbazelMargin = XbazelMargin * resolution.x / resolution.y;\n	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-XbazelMargin, -YbazelMargin), coords) + smoothstep(vec2(1.0 + XbazelMargin, 1.0 + YbazelMargin), vec2(1.0 + outShadowLength), coords));\n	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);\n	color += frameColor * outShadow;\n\n	vec2 reflected = borderReflect(coords);\n	color += max(texture(inputBuffer, reflected).rgb * 0.3 - 0.1, 0.0);\n	fragColor = vec4(color, 1.0);\n}\n";
+var retro_frame_default = "// adapted from https://github.com/Swordfish90/cool-retro-term/blob/master/app/qml/ShaderTerminal.qml\n\nuniform lowp float screenCurvature;\nuniform lowp vec3 frameColor;\nuniform lowp float bazelSize;\n\nvec2 distortCoordinates(vec2 coords){\n	vec2 cc = (coords - vec2(0.5, 0.5));\n	float dist = dot(cc, cc) * screenCurvature;\n	return (coords + cc * (1. + dist) * dist);\n}\n\nfloat max2(vec2 v) {\n	return max(v.x, v.y);\n}\n\nfloat min2(vec2 v) {\n	return min(v.x, v.y);\n}\n\nvec4 texture(sampler2D buf, vec2 uv) {\n	if(!(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0))\n		return texture2D(buf, uv);\n\n	return vec4(0.0);\n}\n\nfloat roundSquare(vec2 p, vec2 b, float r) {\n	return length(max(abs(p)-b,0.0))-r;\n}\n\n// Calculate normal to distance function and move along\n// normal with distance to get point of reflection\nvec2 borderReflect(vec2 p)\n{\n	float r = 0.01;\n	float eps = 0.0001;\n	vec2 epsx = vec2(eps,0.0);\n	vec2 epsy = vec2(0.0,eps);\n	vec2 b = (0.999+vec2(r,r))* 0.5;\n	r /= 3.0;\n	\n	p -= 0.5;\n\n	vec2 normal = vec2(\n		roundSquare(p-epsx,b,r)-roundSquare(p+epsx,b,r),\n		roundSquare(p-epsy,b,r)-roundSquare(p+epsy,b,r)\n	) / eps;\n\n	if (max2(abs(p) - b) < 0.0 || abs(normal.x * normal.y) > 0.1)\n		return vec2(-1.0);\n\n	float d = roundSquare(p, b, r);\n	p += 0.5;\n\n	return p + d*normal;\n}\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 fragColor) {\n	vec2 coords = distortCoordinates(uv);\n\n	vec3 color = texture(inputBuffer, coords).rgb;\n\n	float alpha = 0.0;\n\n	float XbazelMargin = bazelSize * 0.01;\n	float YbazelMargin = XbazelMargin * resolution.x / resolution.y; // FIXME: same x, y bazel size\n\n	float innerShadowLength = 0.01;\n  float innerShadow = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), coords) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), coords));\n  color *= innerShadow;\n\n	float outShadowLength = 0.65 * screenCurvature;\n	float outShadow = max2(1.0 - smoothstep(vec2(-outShadowLength), vec2(-XbazelMargin, -YbazelMargin), coords) + smoothstep(vec2(1.0 + XbazelMargin, 1.0 + YbazelMargin), vec2(1.0 + outShadowLength), coords));\n	outShadow = clamp(sqrt(outShadow), 0.0, 1.0);\n  color += frameColor * outShadow;\n\n	vec2 reflected = borderReflect(coords);  \n	float innerShadow2 = min2(smoothstep(vec2(0.0), vec2(innerShadowLength), reflected) - smoothstep(vec2(1.0 - innerShadowLength), vec2(1.0), reflected)); // FIXME: dedup  \n	color += max(texture(inputBuffer, reflected).rgb * 0.5, 0.0) * innerShadow2;\n	fragColor = vec4(color, 1.0);\n}\n";
 
 // src/glsl/sampling.glsl
 var sampling_default = '// if uv is outside the bounds of 0 to 1, instead sets the output color to the\n// "outOfBoundsColor" define.\n\n// defaults to black\n#ifndef outOfBoundsColor\n#define outOfBoundsColor vec4(0.0, 0.0, 0.0, 1.0)\n#endif\n\nvoid mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {\n	float isOutOfBounds = step(0.0, uv.x) * step(-1.0, -uv.x) * step(0.0, uv.y) * step(-1.0, -uv.y);\n	outputColor = mix(outOfBoundsColor, inputColor, isOutOfBounds);\n}\n';
@@ -156,15 +201,14 @@ var sampling_default = '// if uv is outside the bounds of 0 to 1, instead sets t
 var scale_default = "// scales the image\n\n// default 1.0\n#ifndef scale\n#define scale 1.0\n#endif\n\nvoid mainUv(inout vec2 uv) {\n	uv -= 0.5;\n	uv *= 1.0 / scale;\n	uv += 0.5;\n}\n";
 
 // src/docs/index.ts
-import * as THREE2 from "three";
+import * as THREE3 from "three";
 
 // src/XTermConnector.ts
-import { EffectPass as EffectPass2 } from "postprocessing";
-import { EffectComposer, Pass, RenderPass } from "postprocessing";
+import { EffectComposer, EffectPass as EffectPass3, Pass, RenderPass } from "postprocessing";
 import {
   CanvasTexture,
   Clock,
-  LinearFilter,
+  LinearFilter as LinearFilter2,
   Mesh,
   MeshBasicMaterial,
   OrthographicCamera,
@@ -263,7 +307,7 @@ var XTermConnector = class {
       }
     }
     this.shaderPasses = passes.filter(
-      (pass) => pass instanceof Pass && !(pass instanceof EffectPass2)
+      (pass) => pass instanceof Pass && !(pass instanceof EffectPass3)
     );
   }
   getLayers(term2) {
@@ -330,7 +374,7 @@ var XTermConnector = class {
       mesh.position.z = -xTermLayers.length + i;
       this.scene.add(mesh);
       const texture = new CanvasTexture(xTermLayer);
-      texture.minFilter = LinearFilter;
+      texture.minFilter = LinearFilter2;
       mesh.material.map = texture;
     }
   }
@@ -436,15 +480,15 @@ var config = {
     }
   },
   shaderPaths: {
-    has(path) {
-      return configuration.shaderPaths.includes(path);
+    has(path2) {
+      return configuration.shaderPaths.includes(path2);
     },
-    add(path) {
-      configuration.shaderPaths.push(path);
+    add(path2) {
+      configuration.shaderPaths.push(path2);
     },
-    delete(path) {
+    delete(path2) {
       configuration.shaderPaths = configuration.shaderPaths.filter(
-        (p) => p !== path
+        (p) => p !== path2
       );
     },
     getList() {
@@ -466,6 +510,10 @@ var commands = {
       if (!config.crt.has(option)) {
         throw new Error(`Invalid option name: ${option}`);
       }
+      if (option === "frameColor") {
+        config.crt.set(option, value);
+        return;
+      }
       const optionValue = Number(value);
       if (Number.isNaN(optionValue)) {
         throw new Error(`Invalid option value: ${value}`);
@@ -486,14 +534,14 @@ var commands = {
     }
   },
   shaderPaths: {
-    "-a"(path) {
-      if (config.shaderPaths.has(path)) {
-        throw `Shader path already exists: ${path}`;
+    "-a"(path2) {
+      if (config.shaderPaths.has(path2)) {
+        throw `Shader path already exists: ${path2}`;
       }
-      config.shaderPaths.add(path);
+      config.shaderPaths.add(path2);
     },
-    "-d"(path) {
-      config.shaderPaths.delete(path);
+    "-d"(path2) {
+      config.shaderPaths.delete(path2);
     },
     "-l"() {
       return config.shaderPaths.getList();
@@ -507,7 +555,7 @@ var commands = {
 // package.json
 var package_default = {
   name: "cool-retro-hyper",
-  version: "0.0.5",
+  version: "0.0.6",
   description: "A Hyper terminal plugin that applies a retro CRT monitor effect.",
   main: "dist/index.js",
   scripts: {
@@ -564,17 +612,18 @@ var package_default = {
 };
 
 // src/docs/index.ts
-import { Effect as Effect2, EffectPass as EffectPass3, BlendFunction as BlendFunction2 } from "postprocessing";
+import { Effect as Effect3, EffectPass as EffectPass4, BlendFunction as BlendFunction3 } from "postprocessing";
 var version = package_default.version;
 var noiseTexture = await new Promise((res) => {
-  new THREE2.TextureLoader().load("./allNoise512.png", (texture) => {
-    texture.minFilter = THREE2.LinearFilter;
-    texture.wrapS = THREE2.RepeatWrapping;
-    texture.wrapT = THREE2.RepeatWrapping;
+  new THREE3.TextureLoader().load("./allNoise512.png", (texture) => {
+    texture.minFilter = THREE3.LinearFilter;
+    texture.wrapS = THREE3.RepeatWrapping;
+    texture.wrapT = THREE3.RepeatWrapping;
     res(texture);
   });
 });
 config.crt.set("screenCurvature", 0.3);
+config.crt.set("frameColor", "#2A1B6F");
 config.shaderPaths.add(
   "https://raw.githubusercontent.com/fronterior/cool-retro-hyper/refs/heads/main/examples/neonwave-sunrise.glsl"
 );
@@ -818,10 +867,10 @@ function fetchUserShader(url) {
     if (code.includes("@shadertoy")) {
       code = transformShaderToy(code);
     }
-    return new EffectPass3(
+    return new EffectPass4(
       void 0,
-      new Effect2(url, code, {
-        blendFunction: BlendFunction2.SCREEN
+      new Effect3(url, code, {
+        blendFunction: BlendFunction3.SCREEN
       })
     );
   });

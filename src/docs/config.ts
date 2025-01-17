@@ -1,8 +1,6 @@
 import { defaultCRTOptions } from 'src/createCRTEffect'
 import { CoolRetroHyperConfiguration } from 'src/types'
 
-type CRTOptions = keyof typeof defaultCRTOptions
-
 const configuration: Required<CoolRetroHyperConfiguration> = {
   crt: defaultCRTOptions,
   fps: 60,
@@ -11,7 +9,7 @@ const configuration: Required<CoolRetroHyperConfiguration> = {
 
 export const config = {
   crt: {
-    set(key: string, value: number | boolean) {
+    set(key: string, value: number | boolean | string) {
       configuration.crt[key] = value
     },
     has(key: string) {

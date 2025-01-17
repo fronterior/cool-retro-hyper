@@ -8,6 +8,11 @@ export const commands = {
         throw new Error(`Invalid option name: ${option}`)
       }
 
+      if (option === 'frameColor') {
+        config.crt.set(option, value)
+        return
+      }
+
       const optionValue = Number(value)
       if (Number.isNaN(optionValue)) {
         throw new Error(`Invalid option value: ${value}`)
