@@ -1,5 +1,7 @@
 import React from 'react'
 
 export function Preferences() {
-  return <div></div>
+  const [isVisible, setIsVisible] = useState(false)
+
+  return isVisible ? <div>Preferences</div> : null
 }
