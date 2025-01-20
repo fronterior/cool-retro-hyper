@@ -8,6 +8,7 @@ import { XTermConnector } from './XTermConnector'
 import { loadUserShaders, noiseTexturePromise } from './utils'
 import { EffectPass } from 'postprocessing'
 import * as glslEffects from './glsl'
+import { Configuration } from './Configuration'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -27,6 +28,16 @@ export function decorateHyper(
       console.log('Cool Retro Hyper')
 
       styles.init()
+
+      if (globalThis.document) {
+        const ConfigurationRoot = Object.assign(
+          globalThis.document.createElement('div'),
+          {
+            id: 'cool-retro-hyper-configuration',
+          },
+        )
+        globalThis.document.body.appendChild(ConfigurationRoot)
+      }
     }
 
     static defaultConfig = {
@@ -114,8 +125,8 @@ export function decorateHyper(
     }
 
     getVisibleTermsIdsForRootId(state: HyperState, activeRootId: string) {
-      const ids = []
-      const stack = [activeRootId]
+      const ids: string[] = []
+      const stack: string[] = [activeRootId]
 
       while (true) {
         const termId = stack.shift()
@@ -156,12 +167,41 @@ export function decorateHyper(
     }
 
     render() {
-      return React.createElement(
-        Terms,
-        Object.assign({}, this.props, {
-          onDecorated: this.onDecorated,
-        }),
+      return (
+        <>
+          <Terms {...this.props} onDecorated={this.onDecorated} />
+          <Configuration />
+        </>
       )
     }
   }
+}
+
+export function decorateMenu(menu) {
+  debug('decorateMenu')
+  const isMac = process.platform === 'darwin'
+  // menu label is different on mac
+  const menuLabel = isMac ? 'Shell' : 'File'
+
+  return menu.map((menuCategory) => {
+    if (menuCategory.label !== menuLabel) {
+      return menuItem
+    }
+    return [
+      ...menuCategory,
+      {
+        type: 'separator',
+      },
+      {
+        label: 'Clear all panes in all tabs',
+        accelerator: 'ctrl+shift+y',
+        click(item, focusedWindow) {
+          // on macOS, menu item can clicked without or minized window
+          if (focusedWindow) {
+            focusedWindow.rpc.emit('clear allPanes')
+          }
+        },
+      },
+    ]
+  })
 }
