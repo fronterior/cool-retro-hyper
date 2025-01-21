@@ -1,26 +1,29 @@
 import { Pass } from 'postprocessing'
 import type { FontWeight, Terminal } from 'xterm'
 
+export type BaseCRTOptions = {
+  bloom: number
+  burnInTime: number
+  jitter: number
+  screenCurvature: number
+  noise: number
+  glowingLine: number
+  flickering: number
+  ambientLight: number
+  pixelHeight: number
+  pixelization: boolean
+  rgbSplit: number
+  rgbSplitXDistance: number
+  rgbSplitYDistance: number
+  bazelSize: number
+  frameColor: string
+}
+
 export type CoolRetroHyperConfiguration = {
+  crt?: Partial<BaseCRTOptions>
+  disableGUIConfig?: boolean
   fps?: number
   shaderPaths?: string[]
-  crt?: {
-    bloom?: number
-    burnInTime?: number
-    jitter?: number
-    screenCurvature?: number
-    noise?: number
-    glowingLine?: number
-    flickering?: number
-    ambientLight?: number
-    pixelHeight?: number
-    pixelization?: boolean
-    rgbSplit?: number
-    rgbSplitXDistance?: number
-    rgbSplitYDistance?: number
-    bazelSize?: number
-    frameColor?: string
-  }
 }
 
 export type CRTEffect = {
