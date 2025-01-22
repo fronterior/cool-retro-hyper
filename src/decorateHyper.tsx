@@ -8,7 +8,7 @@ import { XTermConnector } from './XTermConnector'
 import { loadUserShaders, noiseTexturePromise } from './utils'
 import { EffectPass } from 'postprocessing'
 import * as glslEffects from './glsl'
-import { Configuration } from './Configuration'
+import { Settings } from './Settings'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -179,7 +179,7 @@ export function decorateHyper(
       return (
         <>
           <Terms {...this.props} onDecorated={this.onDecorated} />
-          <Configuration
+          <Settings
             isOpen={this.state.isConfigOpen}
             onClose={() => this.setState({ isConfigOpen: false })}
           />

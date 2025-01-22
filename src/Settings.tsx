@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useState } from 'react'
 import { createPortal } from 'react-dom'
-import './Configuration.css'
+import './Settings.css'
 
-export function Configuration({
+export function Settings({
   children,
   isOpen,
   onClose,
