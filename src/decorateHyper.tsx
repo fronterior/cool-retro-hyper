@@ -9,6 +9,7 @@ import { loadUserShaders, noiseTexturePromise } from './utils'
 import { EffectPass } from 'postprocessing'
 import * as glslEffects from './glsl'
 import { Settings } from './Settings'
+import { defaultConfiguration } from './defaultConfiguration'
 
 type HyperComponentProps = {
   onDecorated(terms: HyperComponent): void
@@ -33,15 +34,11 @@ export function decorateHyper(
         const ConfigurationRoot = Object.assign(
           globalThis.document.createElement('div'),
           {
-            id: 'cool-retro-hyper-configuration',
+            id: 'cool-retro-hyper-settings',
           },
         )
         globalThis.document.body.appendChild(ConfigurationRoot)
       }
-    }
-
-    static defaultConfig = {
-      fps: 60,
     }
 
     static xTermConnector = new XTermConnector()
@@ -117,8 +114,6 @@ export function decorateHyper(
         return
       }
 
-      const options = Object.assign({}, CoolRetroHyper.defaultConfig)
-
       const crtEffect = createCRTEffect({
         crtOptions: window.config.getConfig()?.coolRetroHyper?.crt ?? {},
         noiseTexture: this.noiseTexture,
@@ -129,7 +124,9 @@ export function decorateHyper(
       CoolRetroHyper.xTermConnector.connect({
         xTerm: firstVisibleTerm.term,
         crtEffect,
-        fps: options.fps,
+        fps:
+          window.config.getConfig()?.coolRetroHyper?.fps ??
+          defaultConfiguration.fps,
       })
     }
 
