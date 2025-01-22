@@ -15,6 +15,7 @@ import {
 } from 'three'
 import { Terminal } from 'xterm'
 import { CRTEffect } from './types'
+import { defaultConfiguration } from './defaultConfiguration'
 
 export type ConnectOptions = {
   fps?: number
@@ -244,7 +245,7 @@ export class XTermConnector {
       [],
     )
 
-    const fps = 1000 / (this.options.fps ?? 60)
+    const fps = 1000 / (this.options.fps ?? defaultConfiguration.fps)
     const { clock, composer } = this
 
     let previousTime = 0
