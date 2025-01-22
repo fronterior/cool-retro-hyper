@@ -66,6 +66,10 @@ export function decorateHyper(
           window.config.getConfig()?.coolRetroHyper?.shaderPaths ?? [],
         )
       ).then((userEffectPasses) => (this.userEffectPasses = userEffectPasses))
+
+      this.state = {
+        isConfigOpen: false,
+      }
     }
 
     onDecorated(terms: HyperComponent) {
@@ -82,6 +86,11 @@ export function decorateHyper(
           ]),
         )
         .then(() => this.updateXTerms())
+
+      window.rpc.on('crh:open-configuration', () => {
+        console.log('open configuration', this.state)
+        this.setState({ isConfigOpen: true })
+      })
     }
 
     updateXTerms() {
@@ -170,38 +179,12 @@ export function decorateHyper(
       return (
         <>
           <Terms {...this.props} onDecorated={this.onDecorated} />
-          <Configuration />
+          <Configuration
+            isOpen={this.state.isConfigOpen}
+            onClose={() => this.setState({ isConfigOpen: false })}
+          />
         </>
       )
     }
   }
-}
-
-export function decorateMenu(menu) {
-  debug('decorateMenu')
-  const isMac = process.platform === 'darwin'
-  // menu label is different on mac
-  const menuLabel = isMac ? 'Shell' : 'File'
-
-  return menu.map((menuCategory) => {
-    if (menuCategory.label !== menuLabel) {
-      return menuItem
-    }
-    return [
-      ...menuCategory,
-      {
-        type: 'separator',
-      },
-      {
-        label: 'Clear all panes in all tabs',
-        accelerator: 'ctrl+shift+y',
-        click(item, focusedWindow) {
-          // on macOS, menu item can clicked without or minized window
-          if (focusedWindow) {
-            focusedWindow.rpc.emit('clear allPanes')
-          }
-        },
-      },
-    ]
-  })
 }
