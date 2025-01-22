@@ -11,7 +11,7 @@ import type { CoolRetroHyperConfiguration, CRTEffect } from './types'
 import { hex2rgb } from './utils'
 import { defaultConfiguration } from './defaultConfiguration'
 
-export const defaultCRTOptions = defaultConfiguration.crt
+const defaultCRTOptions = defaultConfiguration.crt
 
 type CreateCRTEffectParameters = {
   crtOptions: NonNullable<CoolRetroHyperConfiguration['crt']>
