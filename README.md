@@ -56,21 +56,21 @@ module.exports = {
     ...
     coolRetroHyper: {
       crt: {
+        ambientLight: 0.5,
+        bazelSize: 0.12,
         bloom: 2, // Warning: if this value is exceeded, the screen will not be rendered: 0 ~ 5
         burnInTime: 0.4,
-        jitter: 0.8,
-        screenCurvature: 0.1,
-        noise: 0.4,
-        glowingLine: 0.75,
         flickering: 0.2,
-        ambientLight: 0.5,
+        frameColor: '#191919',
+        glowingLine: 0.75,
+        jitter: 0.8,
+        noise: 0.4,
         pixelHeight: 6.0,
         pixelization: false,
         rgbSplit: 0.25,
         rgbSplitXDistance: 0.13,
         rgbSplitYDistance: 0.08,
-        bazelSize: 0.12,
-        frameColor: '#191919',
+        screenCurvature: 0.1,
       },
       shaderPaths: [
         // glsl file paths

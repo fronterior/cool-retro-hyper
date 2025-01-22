@@ -2,21 +2,21 @@ import { Pass } from 'postprocessing'
 import type { FontWeight, Terminal } from 'xterm'
 
 export type BaseCRTOptions = {
+  ambientLight: number
+  bazelSize: number
   bloom: number
   burnInTime: number
-  jitter: number
-  screenCurvature: number
-  noise: number
-  glowingLine: number
   flickering: number
-  ambientLight: number
+  frameColor: string
+  glowingLine: number
+  jitter: number
+  noise: number
   pixelHeight: number
   pixelization: boolean
   rgbSplit: number
   rgbSplitXDistance: number
   rgbSplitYDistance: number
-  bazelSize: number
-  frameColor: string
+  screenCurvature: number
 }
 
 export type CoolRetroHyperConfiguration = {
