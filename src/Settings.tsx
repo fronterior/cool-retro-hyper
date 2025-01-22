@@ -10,26 +10,26 @@ export function Settings({
   isOpen: boolean
   onClose(): void
 }>) {
-  const configurationRoot = globalThis.document?.getElementById(
-    'cool-retro-hyper-configuration',
+  const settingsRoot = globalThis.document?.getElementById(
+    'cool-retro-hyper-settings',
   )
 
   const handlePreventClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
   }
 
-  return isOpen && configurationRoot
+  return isOpen && settingsRoot
     ? createPortal(
-        <div className="cool-retro-hyper-configuration-dim" onClick={onClose}>
+        <div className="cool-retro-hyper-settings-dim" onClick={onClose}>
           <div
-            className="cool-retro-hyper-configuration"
+            className="cool-retro-hyper-settings"
             onClick={handlePreventClose}
           >
-            <b>Configuration</b>
+            <b>Settings</b>
             <div>{children}</div>
           </div>
         </div>,
-        configurationRoot,
+        settingsRoot,
       )
     : null
 }
