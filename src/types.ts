@@ -21,7 +21,6 @@ export type BaseCRTOptions = {
 
 export type CoolRetroHyperConfiguration = {
   crt?: Partial<BaseCRTOptions>
-  disableGUIConfig?: boolean
   fps?: number
   shaderPaths?: string[]
 }

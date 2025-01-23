@@ -22,7 +22,6 @@ export const defaultConfiguration: Required<
     rgbSplitYDistance: 0.08,
     screenCurvature: 0.1,
   },
-  disableGUIConfig: false,
   fps: 60,
   shaderPaths: [],
 }
