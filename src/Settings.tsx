@@ -1,6 +1,7 @@
-import React, { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
 import './Settings.css'
+import { Knob } from 'rotary-knob/react'
 
 export function Settings({
   children,
@@ -27,6 +28,21 @@ export function Settings({
           >
             <b>Settings</b>
             <div>{children}</div>
+            <div>
+              <Knob
+                defaultValue={1}
+                minAngle={0}
+                maxAngle={300}
+                minValue={0}
+                maxValue={5}
+                startAngle={210}
+                stepAngle={60}
+                onValueChange={console.log}
+                onStatusChange={console.log}
+              >
+                <button type="button" className="knob" />
+              </Knob>
+            </div>
           </div>
         </div>,
         settingsRoot,
