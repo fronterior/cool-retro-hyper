@@ -37,6 +37,7 @@
   "dependencies": {
     "idb": "^8.0.1",
     "postprocessing": "6.36.3",
+    "rotary-knob": "^0.0.1",
     "three": "0.171.0"
   },
   "devDependencies": {
