@@ -1,4 +1,8 @@
-#cool-retro-hyper-settings {
+.container {
+  color: white;
+}
+
+.layer {
   position: fixed;
   top: 0;
   left: 0;
@@ -8,7 +12,7 @@
   z-index: 10;
 }
 
-.cool-retro-hyper-settings-dim {
+.dim {
   position: absolute;
   top: 0;
   left: 0;
@@ -21,7 +25,7 @@
   pointer-events: initial;
 }
 
-.cool-retro-hyper-settings {
+.panel {
   width: 400px;
   height: 300px;
   background: rgba(25, 25, 25, 0.4);

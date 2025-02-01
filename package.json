@@ -37,13 +37,14 @@
   "dependencies": {
     "idb": "^8.0.1",
     "postprocessing": "6.36.3",
-    "rotary-knob": "^0.0.1",
+    "rotary-knob": "^0.0.6",
     "three": "0.171.0"
   },
   "devDependencies": {
     "@types/node": "22.10.1",
     "@types/three": "0.171",
     "electron": "^20.0.6",
+    "esbuild-css-modules-plugin": "^3.1.4",
     "prettier": "3.4.2",
     "tsup": "8.3.5",
     "typescript": "5.7.2"

@@ -33,4 +33,9 @@ declare module '*.glsl' {
   export default value
 }
 
-export {}
+declare module '*.module.css' {
+  const classes: { [key: string]: string }
+  export default classes
+}
+
+export { }

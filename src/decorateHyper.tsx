@@ -8,7 +8,7 @@ import { XTermConnector } from './XTermConnector'
 import { loadUserShaders, noiseTexturePromise } from './utils'
 import { EffectPass } from 'postprocessing'
 import * as glslEffects from './glsl'
-import { Settings } from './Settings'
+import { Settings } from './components/Settings'
 import { defaultConfiguration } from './defaultConfiguration'
 
 type HyperComponentProps = {

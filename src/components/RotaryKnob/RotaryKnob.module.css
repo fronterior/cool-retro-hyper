@@ -1,0 +1,39 @@
+.numberInput {
+  width: 5em;
+}
+.numberInput::-webkit-outer-spin-button,
+.numberInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.container {
+  width: 62px;
+  height: 62px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  border: 1px solid white;
+}
+
+.knob {
+  width: 50px;
+  height: 50px;
+  cursor: grab;
+  display: flex;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 100%;
+  color: transparent;
+  background: transparent;
+}
+
+.knob:before {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 6px;
+  background: white;
+}
