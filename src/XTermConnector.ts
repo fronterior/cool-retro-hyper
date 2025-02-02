@@ -39,9 +39,9 @@ export class XTermConnector {
   private passes: Pass[] = []
   private screenElement: HTMLElement
 
-  private cancelDraw = () => {}
-  private resetScreenElementOpacity = () => {}
-  private removeMouseHandlers = () => {}
+  private cancelDraw = () => { }
+  private resetScreenElementOpacity = () => { }
+  private removeMouseHandlers = () => { }
   private coordinateTransform = (x: number, y: number) => [x, y] as const
 
   private resizeObserver?: ResizeObserver
@@ -291,7 +291,7 @@ export class XTermConnector {
     let x = (clientX - left) / width
     let y = (bottom - clientY) / height
 
-    ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
+      ;[x, y] = this.coordinateTransform?.(x, y) ?? [x, y]
 
     const copy: Record<string, unknown> = {}
     for (const attr in ev) {
@@ -303,7 +303,7 @@ export class XTermConnector {
     const TargetEvent = ev.constructor as typeof MouseEvent | typeof WheelEvent
 
     const clonedEvent = new TargetEvent(ev.type, copy)
-    ;(clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
+      ; (clonedEvent as MouseEvent & { syntethic: boolean }).syntethic = true
     this.screenElement.dispatchEvent(clonedEvent)
   }
 
