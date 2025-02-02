@@ -1,15 +1,38 @@
-.numberInput {
-  width: 5em;
+.container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
+
+.numberInput {
+  width: 3em;
+  font-size: 12px;
+  height: 14px;
+  text-align: center;
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.numberInput:hover,
+.numberInput:focus {
+  border-bottom: 1px solid white;
+}
+
 .numberInput::-webkit-outer-spin-button,
 .numberInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.container {
+.knobContainer {
+  margin-top: 6px;
   width: 62px;
   height: 62px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,7 +45,6 @@
   height: 50px;
   cursor: grab;
   display: flex;
-  display: flex;
   justify-content: center;
   border: 1px solid #ccc;
   border-radius: 100%;
@@ -31,9 +53,46 @@
 }
 
 .knob:before {
+  margin-top: 6px;
   content: '';
   display: inline-block;
+  width: 3px;
+  height: 10px;
+  border-radius: 9999px;
+  background: white;
+}
+
+.baseline,
+.stepline {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.baseline:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   width: 2px;
   height: 6px;
   background: white;
+}
+
+.stepline:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 6px;
+  background: white;
+}
+
+.label {
+  margin-top: 8px;
+  max-width: 90px;
+  font-size: 14px;
+  text-align: center;
+  color: white;
 }
