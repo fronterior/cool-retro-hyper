@@ -27,8 +27,8 @@ importers:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
       rotary-knob:
-        specifier: ^0.0.5
-        version: 0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^0.0.6
+        version: 0.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       three:
         specifier: 0.171.0
         version: 0.171.0
@@ -830,8 +830,8 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
-  rotary-knob@0.0.5:
-    resolution: {integrity: sha512-Klmnq0IlhLmEAqqAEvdAHOfTbfwh44SpC6+GWSZadAZVeoK/0bbTvc85d2GsiLpGfuzwgK3f6qo4H6EAEZuzzg==}
+  rotary-knob@0.0.6:
+    resolution: {integrity: sha512-HC3wvcnNjMXcypCjJLqFGCwekB9OkIK6putNYk/t++niwCSZP3ybYj+Gjzokb89YYItOMsL7w3KMA7AJNkFiKw==}
     peerDependencies:
       react: '>=18.0.8'
       react-dom: '>=18.0.8'
@@ -1706,7 +1706,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.28.1
       fsevents: 2.3.3
 
-  rotary-knob@0.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rotary-knob@0.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
