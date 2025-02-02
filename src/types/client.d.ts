@@ -18,6 +18,6 @@ declare module 'xterm' {
 
 declare module 'electron' {
   interface BrowserWindow {
-    rpc: IpcMain
+    rpc: import('electron').IpcMain
   }
 }
