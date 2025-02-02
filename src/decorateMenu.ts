@@ -9,14 +9,14 @@ export function decorateMenu(menu: MenuItem[]) {
     const menuItems = {
       ...menuItem,
       submenu: [
-        ...(menuItem.submenu ?? []),
+        ...((menuItem.submenu as unknown as MenuItem[]) ?? []),
         { type: 'separator' },
         {
           label: 'CRH Configuration',
           type: 'normal',
-          click(_, focusedWindow: BrowserWindow) {
+          click(_: unknown, focusedWindow: BrowserWindow) {
             // The `focusedWindow` is assigned only when an Electron.BrowserWindow is focused.
-            // Note: If the DevTools is focused, the `emit` will not be triggered.
+            // NOTE: If the DevTools is focused, the `emit` will not be triggered.
             focusedWindow?.rpc.emit('crh:open-configuration')
           },
         },

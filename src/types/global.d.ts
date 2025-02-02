@@ -14,17 +14,3 @@ declare global {
     rpc: IpcRenderer
   }
 }
-
-declare module 'xterm' {
-  interface Terminal {
-    _core: {
-      screenElement: HTMLElement
-    }
-  }
-}
-
-declare module 'electron' {
-  interface BrowserWindow {
-    rpc: IpcMain
-  }
-}

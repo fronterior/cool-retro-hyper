@@ -45,7 +45,7 @@ export function decorateHyper(
     static noiseTexturePromise = noiseTexturePromise
     static userEffectPassesPromise: Promise<EffectPass[]>
 
-    private hyper: HyperComponent
+    private hyper!: HyperComponent
 
     private noiseTexture!: Awaited<typeof CoolRetroHyper.noiseTexturePromise>
     private userEffectPasses: EffectPass[] = []
