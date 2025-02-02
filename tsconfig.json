@@ -12,8 +12,7 @@
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "paths": {},
-    "alwaysStrict": true,
+    "strict": true,
     "allowUnreachableCode": false,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -24,10 +23,6 @@
     "jsx": "react"
   },
   "include": [
-    "./**/*.ts",
-    "./**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules/**/*"
+    "src"
   ]
 }
