@@ -1,5 +1,7 @@
 export const init = () => {
   const css = `
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+
 .hyper_main {
   z-index: 1;
 }
