@@ -1,0 +1,53 @@
+.container {
+  margin-top: 10px;
+  height: 106px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.switch {
+  width: 38px;
+  height: 62px;
+  border: 1px solid white;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+}
+
+.switchContainer {
+  position: relative;
+  width: 22px;
+  height: 28px;
+  border: 1px solid white;
+  border-radius: 2px;
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.switchEmpty {
+  flex: 1;
+  transition: flex 0.125s ease;
+}
+
+.switchButton {
+  width: 18px;
+  height: 12px;
+  border: 1px solid white;
+  border-radius: 2px;
+}
+
+.label {
+  margin-top: 8px;
+  max-width: 90px;
+  font-size: 14px;
+  text-align: center;
+  color: white;
+}
