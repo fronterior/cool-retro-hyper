@@ -1,0 +1,21 @@
+.container {
+  position: relative;
+  border: 1px solid white;
+  padding: 30px 20px;
+}
+
+.label {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  background: white;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #191919;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
