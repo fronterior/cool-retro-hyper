@@ -6,6 +6,7 @@ import styles from './Settings.module.css'
 import { SettingsGroup } from './SettingsGroup'
 import { SettingsPanel } from './SettingsPanel'
 import { OnOffSwitch } from '../OnOffSwitch/OnOffSwitch'
+import { Button } from '../Button/Button'
 
 export function Settings({
   isOpen,
@@ -120,6 +121,7 @@ export function Settings({
                   />
                 </div>
               </SettingsGroup>
+
               <div className={styles.flexColumn}>
                 <SettingsGroup label="Lighting Effects">
                   <RotaryKnob
@@ -177,7 +179,7 @@ export function Settings({
                     maxAngle={300}
                     minValue={0}
                     maxValue={0.5}
-                    startAngle={225}
+                    startAngle={210}
                     transform={(n) => +n.toFixed(2)}
                     onValueChange={() => { }}
                   />
@@ -192,6 +194,32 @@ export function Settings({
                     transform={(n) => +n.toFixed(2)}
                     onValueChange={() => { }}
                   />
+                </SettingsGroup>
+              </div>
+
+              <div className={styles.flexColumn}>
+                <SettingsGroup label="Shader">
+                  <div></div>
+                  <div>
+                    <Button>ADD</Button>
+                    <Button>DELETE</Button>
+                    <Button>TOGGLE</Button>
+                  </div>
+                </SettingsGroup>
+                <SettingsGroup label="Performance">
+                  <div>
+                    <RotaryKnob
+                      label="FPS"
+                      defaultValue={60}
+                      minAngle={0}
+                      maxAngle={300}
+                      minValue={1}
+                      maxValue={60}
+                      stepValue={1}
+                      startAngle={210}
+                      onValueChange={() => { }}
+                    />
+                  </div>
                 </SettingsGroup>
               </div>
             </div>

@@ -3,7 +3,7 @@ import styles from './SettingsGroup.module.css'
 
 interface SettingsGroupProps {
   label: string
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 export function SettingsGroup({ label, children }: SettingsGroupProps) {
